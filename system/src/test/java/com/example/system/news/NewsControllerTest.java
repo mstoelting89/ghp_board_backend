@@ -1,5 +1,7 @@
 package com.example.system.news;
 
+import com.example.system.attachment.Attachment;
+import com.example.system.attachment.AttachmentRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -26,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 @SpringBootTest
 public class NewsControllerTest {
-    /*
+
     // Testfälle:
     // erhalt von allen Newseinträgen
     // erhalt von einem Newseintrag
@@ -59,22 +61,36 @@ public class NewsControllerTest {
     private NewsRepository newsRepository;
 
     @Autowired
+    private AttachmentRepository attachmentRepository;
+
+    @Autowired
     private WebApplicationContext webApplicationContext;
 
     private MockMvc mockMvc;
 
-    private News news = new News();
-    private News news2 = new News();
-
     @BeforeEach
     public void setup() {
+        News news = new News();
+        News news2 = new News();
+        Attachment attachment = new Attachment();
+        Attachment attachment2 = new Attachment();
 
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
+
+        attachment.setId(1L);
+        attachment.setLocation(NEWS_IMAGE);
+        attachmentRepository.save(attachment);
+
+        attachment2.setId(2L);
+        attachment2.setLocation(NEWS_IMAGE_2);
+        attachmentRepository.save(attachment2);
+
+
 
         news.setId(1L);
         news.setNewsAuthor(NEWS_AUTHOR);
         news.setNewsDate(NEWS_DATE);
-        news.setNewsImage(NEWS_IMAGE);
+        news.setNewsImage(attachmentRepository.findById(1L).orElseThrow());
         news.setNewsText(NEWS_TEXT);
         news.setNewsTitle(NEWS_TITLE);
 
@@ -83,7 +99,7 @@ public class NewsControllerTest {
         news2.setId(2L);
         news2.setNewsAuthor(NEWS_AUTHOR_2);
         news2.setNewsDate(NEWS_DATE_2);
-        news2.setNewsImage(NEWS_IMAGE_2);
+        news2.setNewsImage(attachmentRepository.findById(2L).orElseThrow());
         news2.setNewsText(NEWS_TEXT_2);
         news2.setNewsTitle(NEWS_TITLE_2);
 
@@ -115,7 +131,7 @@ public class NewsControllerTest {
         assertEquals(news.getNewsText(), NEWS_TEXT);
         assertEquals(news.getNewsTitle(), NEWS_TITLE);
         assertEquals(news.getNewsDate(), NEWS_DATE);
-        assertEquals(news.getNewsImage(), NEWS_IMAGE);
+        assertEquals(news.getNewsImage().getLocation(), NEWS_IMAGE);
 
         var news2 = newsEntries.get(1);
 
@@ -124,7 +140,7 @@ public class NewsControllerTest {
         assertEquals(news2.getNewsText(), NEWS_TEXT_2);
         assertEquals(news2.getNewsTitle(), NEWS_TITLE_2);
         assertEquals(news2.getNewsDate(), NEWS_DATE_2);
-        assertEquals(news2.getNewsImage(), NEWS_IMAGE_2);
+        assertEquals(news2.getNewsImage().getLocation(), NEWS_IMAGE_2);
     }
 
     @Test
@@ -146,27 +162,31 @@ public class NewsControllerTest {
         assertEquals(newsEntry.getNewsText(), NEWS_TEXT);
         assertEquals(newsEntry.getNewsTitle(), NEWS_TITLE);
         assertEquals(newsEntry.getNewsDate(), NEWS_DATE);
-        assertEquals(newsEntry.getNewsImage(), NEWS_IMAGE);
+        assertEquals(newsEntry.getNewsImage().getLocation(), NEWS_IMAGE);
     }
 
     @Test
     public void shouldInsertNewsEntry() throws Exception {
-
-        //JSONObject obj = new JSONObject();
-        //obj.put("newsDate", NEWS_DATE_3);
-        //obj.put("newsTitle", NEWS_TITLE_3);
-        //obj.put("newsText", NEWS_TEXT_3);
-        //obj.put("newsAuthor", NEWS_AUTHOR_3);
+        /*
+        JSONObject obj = new JSONObject();
+        obj.put("newsDate", NEWS_DATE_3);
+        obj.put("newsTitle", NEWS_TITLE_3);
+        obj.put("newsText", NEWS_TEXT_3);
+        obj.put("newsAuthor", NEWS_AUTHOR_3);
         //obj.put("newsImage", NEWS_IMAGE_3);
-//
-        //final var mvcResult = this.mockMvc.perform(
-        //    MockMvcRequestBuilders.post("/api/v1/news/", obj.get)
-        //            .accept(MediaType.APPLICATION_JSON))
-        //    .andExpect(status().isOk())
-        //    .andReturn();
-//
-        //System.out.println("Foo");
 
+        final var mvcResult = this.mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/v1/news/", obj)
+                    .accept(MediaType.MULTIPART_FORM_DATA_VALUE))
+            .andExpect(status().isOk())
+            .andReturn();
+
+        */
     }
-    */
+
+    //TODO: finish insertNewsEntry
+    //TODO: create test shouldUpdateNews
+    //TODO: create test shouldDeleteNews
+
+    //TODO: test authentication?
 }
