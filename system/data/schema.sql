@@ -41,6 +41,7 @@ CREATE TABLE `demand` (
     `demand_date` datetime NOT NULL,
     `demand_text` varchar(255) NOT NULL,
     `demand_title` varchar(255) NOT NULL,
+    `demand_name` varchar(255) NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

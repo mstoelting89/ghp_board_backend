@@ -1,11 +1,18 @@
 package com.example.system.demand;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -22,6 +29,24 @@ public class DemandController {
     @GetMapping(path = "/api/v1/demand/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getDemandById(@PathVariable("id") Long id) {
         return new ResponseEntity<>(demandService.getDemandById(id), HttpStatus.OK);
+    }
+
+    @PostMapping(
+            path = "/api/v1/demand",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<?> insertNewDemand(
+            @RequestParam Optional<List<MultipartFile>> files,
+            @RequestParam String demandData
+    ) throws JsonProcessingException {
+
+        ObjectMapper mapper = new ObjectMapper()
+                .findAndRegisterModules()
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        DemandEntryDto demandEntryDto = mapper.readValue(demandData, DemandEntryDto.class);
+
+        return new ResponseEntity<>(demandService.insertNewDemandEntry(demandEntryDto, files), HttpStatus.OK);
     }
 
     @ExceptionHandler(NotFoundException.class)

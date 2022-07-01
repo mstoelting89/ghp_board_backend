@@ -32,6 +32,9 @@ public class Demand {
     @Column(nullable = false)
     private String demandText;
 
+    @Column(nullable = false)
+    private String demandName;
+
     @OneToMany
     private List<Attachment> demandImages;
 }

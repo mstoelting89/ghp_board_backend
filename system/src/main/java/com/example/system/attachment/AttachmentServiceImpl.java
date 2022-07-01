@@ -14,8 +14,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Base64;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
@@ -35,6 +36,27 @@ public class AttachmentServiceImpl implements AttachmentService{
         } else {
             return null;
         }
+    }
+
+    @Override
+    public List<Attachment> handleAttachmentUploadList(List<MultipartFile> files) {
+        List<Attachment> fileList = new ArrayList<>();
+
+        String uploadDir = "/upload/images/";
+
+        files.forEach(file -> {
+            String ext = Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf(".") + 1);
+            String fileName = String.format("%s.%s", RandomStringUtils.randomAlphanumeric(8), ext);
+            try {
+                saveFile(uploadDir, fileName, file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            fileList.add(attachmentRepository.save(new Attachment(fileName)));
+        });
+
+        return fileList;
     }
 
     @Override
