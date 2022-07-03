@@ -16,6 +16,6 @@ public interface NewsService {
 
     News updateNewsEntry(Long newsId, NewsEntryDto newsUpdateDto, Optional<MultipartFile> file) throws IOException;
 
-    void deleteNewsEntry(Long newsId);
+    void deleteNewsEntry(Long newsId) throws IOException;
 
 }

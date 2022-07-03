@@ -37,4 +37,12 @@ public class Demand {
 
     @OneToMany
     private List<Attachment> demandImages;
+
+    public Demand(LocalDateTime demandDate, String demandTitle, String demandText, String demandName, List<Attachment> demandImages) {
+        this.demandDate = demandDate;
+        this.demandTitle = demandTitle;
+        this.demandText = demandText;
+        this.demandName = demandName;
+        this.demandImages = demandImages;
+    }
 }

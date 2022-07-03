@@ -1,6 +1,6 @@
 package com.example.system.news;
 
-import com.example.system.attachment.AttachmentServiceImpl;
+import com.example.system.attachment.AttachmentService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +15,7 @@ import java.util.Optional;
 public class NewsServiceImpl implements NewsService{
 
     private NewsRepository newsRepository;
-    private AttachmentServiceImpl attachmentServiceImpl;
+    private AttachmentService attachmentService;
 
     public List<News> getAllNewsEntries() {
         return newsRepository.findAllByOrderByNewsDateDesc();
@@ -25,7 +25,7 @@ public class NewsServiceImpl implements NewsService{
         var newsEntry = newsRepository.findById(id).orElseThrow(() -> new NotFoundException("Newsentry not found"));
         var attachment = "";
         if (newsEntry.getNewsImage() != null) {
-            attachment = attachmentServiceImpl.getAttachmentAsBase64(newsEntry.getNewsImage().getId());
+            attachment = attachmentService.getAttachmentAsBase64(newsEntry.getNewsImage().getId());
         }
 
         return new NewsEntryDto(
@@ -40,7 +40,7 @@ public class NewsServiceImpl implements NewsService{
 
     public News insertNewNewsEntry(NewsEntryDto newsEntryDto, Optional<MultipartFile> file) throws IOException {
 
-        var attachment = attachmentServiceImpl.handelAttachmentUpload(file);
+        var attachment = attachmentService.handelAttachmentUpload(file);
 
         if(
                 newsEntryDto.getNewsAuthor() == null ||
@@ -65,7 +65,12 @@ public class NewsServiceImpl implements NewsService{
         var newsEntry = newsRepository.findById(newsId)
                 .orElseThrow(() -> new NotFoundException("Kein Eintrag mit der Id " + newsId + " gefunden"));
 
-        var attachment = attachmentServiceImpl.handelAttachmentUpload(file);
+        var attachment = attachmentService.handelAttachmentUpload(file);
+
+        if (newsEntry.getNewsImage() != null) {
+            newsRepository.deleteImage(newsId);
+            attachmentService.deleteImage(newsEntry.getNewsImage().getId());
+        }
 
         if(
                 newsUpdateDto.getNewsAuthor() == null ||
@@ -85,11 +90,11 @@ public class NewsServiceImpl implements NewsService{
     }
 
     @Override
-    public void deleteNewsEntry(Long newsId) {
+    public void deleteNewsEntry(Long newsId) throws IOException {
         var newsEntry = newsRepository.findById(newsId)
                 .orElseThrow(() -> new NotFoundException("Löschen fehlgeschlagen - Eintrag mit der ID " + newsId + " nicht gefunden"));
-
+        var imageId = newsEntry.getNewsImage().getId();
         newsRepository.delete(newsEntry);
-
+        attachmentService.deleteImage(imageId);
     }
 }

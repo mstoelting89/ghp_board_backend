@@ -79,6 +79,40 @@ public class AttachmentServiceImpl implements AttachmentService{
         return encodedString;
     }
 
+    @Override
+    public List<String> getAttachmentListAsBase64(Long id) {
+        var encodedStrings = new ArrayList<String>();
+        var attachments = attachmentRepository.getAttachmentById(id);
+
+        attachments.forEach(attachment -> {
+            byte[] image = new byte[0];
+            try {
+                image = FileUtils.readFileToByteArray(new File("/upload/images/" + attachment.getLocation()));
+                encodedStrings.add(Base64.getEncoder().encodeToString(image));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return encodedStrings;
+    }
+
+    public void deleteImage(Long id) throws IOException {
+        var attachment = attachmentRepository.findById(id).orElseThrow(() -> new NotFoundException("Bild nicht vorhanden"));
+        Path filePath = Paths.get("/upload/images/" + attachment.getLocation());
+
+        if (!Files.exists(filePath)) {
+            throw new NotFoundException("Datei nicht vorhanden");
+        } else {
+            try {
+                Files.delete(filePath);
+                attachmentRepository.delete(attachment);
+            } catch (IOException e) {
+                throw new IOException("Datei konnte nicht gelöscht werden");
+            }
+        }
+    }
+
     private void saveFile(String uploadDir, String fileName, MultipartFile multipartFile) throws IOException {
         Path uploadPath = Paths.get(uploadDir);
         if(!Files.exists(uploadPath)) {

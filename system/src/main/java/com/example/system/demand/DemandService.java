@@ -9,7 +9,7 @@ public interface DemandService {
 
     List<Demand> getAllDemandEntries();
 
-    Demand getDemandById(Long id);
+    DemandEntryDto getDemandById(Long id);
 
     Demand insertNewDemandEntry(DemandEntryDto demandEntryDto, Optional<List<MultipartFile>> file);
 }

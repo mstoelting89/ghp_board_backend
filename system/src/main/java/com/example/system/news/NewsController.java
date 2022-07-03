@@ -78,7 +78,7 @@ public class NewsController {
     @DeleteMapping(
             path = "/api/v1/news/{id}"
     )
-    public ResponseEntity<?> deleteNews(@PathVariable("id") Long newsDeleteId) {
+    public ResponseEntity<?> deleteNews(@PathVariable("id") Long newsDeleteId) throws IOException {
         newsService.deleteNewsEntry(newsDeleteId);
         return new ResponseEntity<>("", HttpStatus.OK);
     }
