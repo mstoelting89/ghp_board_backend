@@ -49,6 +49,24 @@ public class DemandController {
         return new ResponseEntity<>(demandService.insertNewDemandEntry(demandEntryDto, files), HttpStatus.OK);
     }
 
+    @PutMapping(
+            path = "/api/v1/demand",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<?> updateDemandEntry(
+            @RequestParam Optional<List<MultipartFile>> files,
+            @RequestParam Long demandId,
+            @RequestParam String demandData
+    ) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper()
+                .findAndRegisterModules()
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        DemandEntryDto demandEntryDto = mapper.readValue(demandData, DemandEntryDto.class);
+
+        return new ResponseEntity<>(demandService.updateDemandEntry(demandEntryDto, demandId, files), HttpStatus.OK);
+    }
+
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<?> handlerNotFoundException(NotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);

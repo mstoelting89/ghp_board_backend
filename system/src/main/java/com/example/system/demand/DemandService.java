@@ -12,4 +12,6 @@ public interface DemandService {
     DemandEntryDto getDemandById(Long id);
 
     Demand insertNewDemandEntry(DemandEntryDto demandEntryDto, Optional<List<MultipartFile>> file);
+
+    Demand updateDemandEntry(DemandEntryDto demandEntryDto, Long demandId, Optional<List<MultipartFile>> file);
 }

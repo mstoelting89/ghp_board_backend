@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -35,7 +36,7 @@ public class Demand {
     @Column(nullable = false)
     private String demandName;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Attachment> demandImages;
 
     public Demand(LocalDateTime demandDate, String demandTitle, String demandText, String demandName, List<Attachment> demandImages) {

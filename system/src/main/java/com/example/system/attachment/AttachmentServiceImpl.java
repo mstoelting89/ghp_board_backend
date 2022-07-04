@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
@@ -20,7 +21,7 @@ import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
-public class AttachmentServiceImpl implements AttachmentService{
+public class AttachmentServiceImpl implements AttachmentService {
 
     private AttachmentRepository attachmentRepository;
 
@@ -80,23 +81,27 @@ public class AttachmentServiceImpl implements AttachmentService{
     }
 
     @Override
-    public List<String> getAttachmentListAsBase64(Long id) {
-        var encodedStrings = new ArrayList<String>();
+    public List<AttachmentResponse> getAttachmentListAsBase64(Long id) {
+        var encodedImages = new ArrayList<AttachmentResponse>();
         var attachments = attachmentRepository.getAttachmentById(id);
 
         attachments.forEach(attachment -> {
+            var attachmentResponse = new AttachmentResponse();
+            attachmentResponse.setId(attachment.getId());
             byte[] image = new byte[0];
             try {
                 image = FileUtils.readFileToByteArray(new File("/upload/images/" + attachment.getLocation()));
-                encodedStrings.add(Base64.getEncoder().encodeToString(image));
+                attachmentResponse.setBase64(Base64.getEncoder().encodeToString(image));
+                encodedImages.add(attachmentResponse);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
 
-        return encodedStrings;
+        return encodedImages;
     }
 
+    @Transactional
     public void deleteImage(Long id) throws IOException {
         var attachment = attachmentRepository.findById(id).orElseThrow(() -> new NotFoundException("Bild nicht vorhanden"));
         Path filePath = Paths.get("/upload/images/" + attachment.getLocation());

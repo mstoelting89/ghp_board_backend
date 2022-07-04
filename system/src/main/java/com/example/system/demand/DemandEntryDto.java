@@ -1,5 +1,6 @@
 package com.example.system.demand;
 
+import com.example.system.attachment.AttachmentResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,5 +17,5 @@ public class DemandEntryDto {
     private String demandTitle;
     private String demandText;
     private String demandName;
-    private List<String> demandImages;
+    private List<AttachmentResponse> demandImages;
 }

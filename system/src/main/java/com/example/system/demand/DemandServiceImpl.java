@@ -1,12 +1,14 @@
 package com.example.system.demand;
 
 import com.example.system.attachment.Attachment;
+import com.example.system.attachment.AttachmentResponse;
 import com.example.system.attachment.AttachmentServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +29,7 @@ public class DemandServiceImpl implements DemandService {
     @Override
     public DemandEntryDto getDemandById(Long id) {
         var demand = demandRepository.findById(id).orElseThrow(() -> new NotFoundException("Keine Anfrage mit der id " + id + " gefunden"));
-        List<String> attachments = new ArrayList<>();
+        List<AttachmentResponse> attachments = new ArrayList<>();
 
         if(demand.getDemandImages() != null) {
             attachments = attachmentServiceImpl.getAttachmentListAsBase64(id);
@@ -62,5 +64,78 @@ public class DemandServiceImpl implements DemandService {
                 demandEntryDto.getDemandName(),
                 attachments
         ));
+    }
+
+    @Override
+    public Demand updateDemandEntry(DemandEntryDto demandNewDto, Long demandId, Optional<List<MultipartFile>> file) {
+        var demandPreviousEntry = demandRepository.findById(demandId)
+                .orElseThrow(() -> new NotFoundException("Kein Eintrag mit der Id " + demandId + " gefunden"));
+        var newImageIds = new ArrayList<>();
+        var toDeleteImages = new ArrayList<Attachment>();
+        var existingAttachments = new ArrayList<Attachment>();
+
+        // Get array with only new image ids
+        demandNewDto.getDemandImages().forEach(newImage -> {
+            newImageIds.add(newImage.getId());
+        });
+
+        // check if the new image id is in the previous image array -> if not put them into the delete array
+        demandPreviousEntry.getDemandImages().forEach(item -> {
+            if (!newImageIds.contains(item.getId())) {
+                toDeleteImages.add(item);
+            } else {
+                existingAttachments.add(item);
+            }
+        });
+
+        // delete the images in the delete array
+        toDeleteImages.forEach(deleteImage -> {
+            demandPreviousEntry.getDemandImages().remove(deleteImage);
+            demandRepository.save(demandPreviousEntry);
+
+            try {
+                attachmentServiceImpl.deleteImage(deleteImage.getId());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        // handle new images
+        List<MultipartFile> fileList = file.orElse(Collections.emptyList());
+        List<Attachment> newAttachments = attachmentServiceImpl.handleAttachmentUploadList(fileList);
+
+        existingAttachments.forEach(item -> {
+            System.out.println("-- Existing Attachments --");
+            System.out.println(item.getLocation());
+        });
+
+        newAttachments.forEach(item -> {
+            System.out.println("-- New Attachments --");
+            System.out.println(item.getLocation());
+        });
+
+        // merge both attachment arrays (new and old)
+        existingAttachments.addAll(newAttachments);
+
+        existingAttachments.forEach(item -> {
+            System.out.println("-- All Attachments --");
+            System.out.println(item.getLocation());
+        });
+
+        // update
+        if (
+                demandNewDto.getDemandTitle() == null ||
+                demandNewDto.getDemandText() == null
+        ) {
+            throw new NotFoundException("Speichern fehlgeschlagen - Eintrag nicht vollständig");
+        }
+
+        demandPreviousEntry.setDemandDate(demandNewDto.getDemandDate());
+        demandPreviousEntry.setDemandTitle(demandNewDto.getDemandTitle());
+        demandPreviousEntry.setDemandName(demandNewDto.getDemandName());
+        demandPreviousEntry.setDemandText(demandNewDto.getDemandText());
+        demandPreviousEntry.setDemandImages(existingAttachments);
+
+        return demandRepository.save(demandPreviousEntry);
     }
 }
