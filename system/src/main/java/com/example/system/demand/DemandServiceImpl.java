@@ -104,25 +104,10 @@ public class DemandServiceImpl implements DemandService {
         List<MultipartFile> fileList = file.orElse(Collections.emptyList());
         List<Attachment> newAttachments = attachmentServiceImpl.handleAttachmentUploadList(fileList);
 
-        existingAttachments.forEach(item -> {
-            System.out.println("-- Existing Attachments --");
-            System.out.println(item.getLocation());
-        });
-
-        newAttachments.forEach(item -> {
-            System.out.println("-- New Attachments --");
-            System.out.println(item.getLocation());
-        });
-
         // merge both attachment arrays (new and old)
         existingAttachments.addAll(newAttachments);
 
-        existingAttachments.forEach(item -> {
-            System.out.println("-- All Attachments --");
-            System.out.println(item.getLocation());
-        });
-
-        // update
+        // update Entry
         if (
                 demandNewDto.getDemandTitle() == null ||
                 demandNewDto.getDemandText() == null
