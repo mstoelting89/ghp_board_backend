@@ -14,4 +14,6 @@ public interface DemandService {
     Demand insertNewDemandEntry(DemandEntryDto demandEntryDto, Optional<List<MultipartFile>> file);
 
     Demand updateDemandEntry(DemandEntryDto demandEntryDto, Long demandId, Optional<List<MultipartFile>> file);
+
+    void deleteNewsEntry(Long newsDeleteId);
 }

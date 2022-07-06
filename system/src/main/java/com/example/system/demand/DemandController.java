@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,6 +66,14 @@ public class DemandController {
         DemandEntryDto demandEntryDto = mapper.readValue(demandData, DemandEntryDto.class);
 
         return new ResponseEntity<>(demandService.updateDemandEntry(demandEntryDto, demandId, files), HttpStatus.OK);
+    }
+
+    @DeleteMapping(
+            path = "/api/v1/demand/{id}"
+    )
+    public ResponseEntity<?> deleteDemand(@PathVariable("id") Long newsDeleteId) throws IOException {
+        demandService.deleteNewsEntry(newsDeleteId);
+        return new ResponseEntity<>("", HttpStatus.OK);
     }
 
     @ExceptionHandler(NotFoundException.class)

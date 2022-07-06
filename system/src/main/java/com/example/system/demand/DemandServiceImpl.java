@@ -87,6 +87,11 @@ public class DemandServiceImpl implements DemandService {
                 existingAttachments.add(item);
             }
         });
+        System.out.println("---- gelöschte Bilder ----");
+        toDeleteImages.forEach(item -> {
+            System.out.println(item.getId());
+            System.out.println(item.getLocation());
+        });
 
         // delete the images in the delete array
         toDeleteImages.forEach(deleteImage -> {
@@ -100,10 +105,19 @@ public class DemandServiceImpl implements DemandService {
             }
         });
 
+
         // handle new images
         List<MultipartFile> fileList = file.orElse(Collections.emptyList());
+        System.out.println("---- FileList ----");
+        fileList.forEach(item -> {
+            System.out.println(item.getOriginalFilename());
+        });
         List<Attachment> newAttachments = attachmentServiceImpl.handleAttachmentUploadList(fileList);
-
+        System.out.println("---- Neue Bilder ----");
+        newAttachments.forEach(item -> {
+            System.out.println(item.getId());
+            System.out.println(item.getLocation());
+        });
         // merge both attachment arrays (new and old)
         existingAttachments.addAll(newAttachments);
 
@@ -122,5 +136,13 @@ public class DemandServiceImpl implements DemandService {
         demandPreviousEntry.setDemandImages(existingAttachments);
 
         return demandRepository.save(demandPreviousEntry);
+    }
+
+    @Override
+    public void deleteNewsEntry(Long demandId) {
+        var demandEntry = demandRepository.findById(demandId)
+                .orElseThrow(() -> new NotFoundException("Löschen fehlgeschlagen - Eintrag mit der ID " + demandId + " nicht gefunden"));
+
+        demandRepository.delete(demandEntry);
     }
 }
