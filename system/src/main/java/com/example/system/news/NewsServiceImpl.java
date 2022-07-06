@@ -93,8 +93,6 @@ public class NewsServiceImpl implements NewsService{
     public void deleteNewsEntry(Long newsId) throws IOException {
         var newsEntry = newsRepository.findById(newsId)
                 .orElseThrow(() -> new NotFoundException("Löschen fehlgeschlagen - Eintrag mit der ID " + newsId + " nicht gefunden"));
-        var imageId = newsEntry.getNewsImage().getId();
         newsRepository.delete(newsEntry);
-        attachmentService.deleteImage(imageId);
     }
 }

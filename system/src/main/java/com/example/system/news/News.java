@@ -33,7 +33,7 @@ public class News {
     @Column(nullable = false)
     private String newsAuthor;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Attachment newsImage;
 
     public News (LocalDateTime newsDate, String newsTitle, String newsText, String newsAuthor, Attachment newsImage) {
