@@ -12,4 +12,6 @@ public interface VotingService {
     Optional<VotingResponseDto> getVotingValue(Demand demand);
 
     Optional<Boolean> getVotingByUser(Demand demand, User user);
+
+    void deleteByDemand(Demand demand);
 }

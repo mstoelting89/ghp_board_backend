@@ -193,6 +193,7 @@ public class DemandServiceImpl implements DemandService {
         var demandEntry = demandRepository.findById(demandId)
                 .orElseThrow(() -> new NotFoundException("Löschen fehlgeschlagen - Eintrag mit der ID " + demandId + " nicht gefunden"));
 
+        votingService.deleteByDemand(demandEntry);
         demandRepository.delete(demandEntry);
     }
 }

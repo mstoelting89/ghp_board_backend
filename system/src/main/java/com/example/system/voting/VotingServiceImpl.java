@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @AllArgsConstructor
@@ -20,23 +21,29 @@ public class VotingServiceImpl implements VotingService{
 
     @Override
     public VotingResponseDto setVotingValue(VotingEntryDto votingEntryDto, String email) {
-        Voting votingResponse;
+        AtomicBoolean newValue = new AtomicBoolean(false);
         User user = userService.loadUserByMail(email);
         Demand demand = demandRepository.findById(votingEntryDto.getDemandId())
                 .orElseThrow(() -> new NotFoundException("Anfrage nicht gefunden"));
 
         boolean voting = votingEntryDto.getVoteValue() == 1;
-        var previousVoting = votingRepository.findByDemandAndUser(demand, user).orElseGet(() -> votingRepository.save(new Voting(
-                user,
-                demand,
-                voting
-        )));
+        var previousVoting = votingRepository.findByDemandAndUser(demand, user).orElseGet(() -> {
+            newValue.set(true);
+            return votingRepository.save(new Voting(
+                    user,
+                    demand,
+                    voting
+            ));
+        });
 
         if (!previousVoting.getVote().equals(voting)) {
             previousVoting.setVote(voting);
-            votingResponse = votingRepository.save(previousVoting);
+            votingRepository.save(previousVoting);
+        } else {
+            if (!newValue.get()) {
+                votingRepository.delete(previousVoting);
+            }
         }
-
 
         return new VotingResponseDto(
                 demand.getId(),
@@ -64,5 +71,10 @@ public class VotingServiceImpl implements VotingService{
             return Optional.empty();
         }
         return Optional.of(voting.get().getVote());
+    }
+
+    @Override
+    public void deleteByDemand(Demand demand) {
+        votingRepository.deleteAllByDemand(demand);
     }
 }
