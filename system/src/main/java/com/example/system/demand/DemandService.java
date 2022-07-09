@@ -7,9 +7,9 @@ import java.util.Optional;
 
 public interface DemandService {
 
-    List<Demand> getAllDemandEntries();
+    List<DemandResponseDto> getAllDemandEntries(String email);
 
-    DemandEntryDto getDemandById(Long id);
+    DemandResponseDto getDemandById(Long id, String email);
 
     Demand insertNewDemandEntry(DemandEntryDto demandEntryDto, Optional<List<MultipartFile>> file);
 

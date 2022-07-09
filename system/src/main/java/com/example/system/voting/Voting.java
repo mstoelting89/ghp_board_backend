@@ -1,5 +1,6 @@
-package com.example.system.demand;
+package com.example.system.voting;
 
+import com.example.system.demand.Demand;
 import com.example.system.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,4 +28,10 @@ public class Voting {
     private Demand demand;
 
     private Boolean vote;
+
+    public Voting(User user, Demand demand, Boolean vote) {
+        this.user = user;
+        this.demand = demand;
+        this.vote = vote;
+    }
 }

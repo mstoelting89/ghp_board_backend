@@ -1,5 +1,6 @@
 package com.example.system.demand;
 
+import com.example.system.security.jwt.JwtAuthenticationService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -21,15 +23,20 @@ import java.util.Optional;
 public class DemandController {
 
     private DemandService demandService;
+    private JwtAuthenticationService jwtAuthenticationService;
 
     @GetMapping(path = "/api/v1/demand", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAllDemands() {
-        return new ResponseEntity<>(demandService.getAllDemandEntries(), HttpStatus.OK);
+    public ResponseEntity<?> getAllDemands(HttpServletRequest request) {
+        final String token = jwtAuthenticationService.extractTokenFromRequest(request);
+        final String email = jwtAuthenticationService.getEmailFromToken(token);
+        return new ResponseEntity<>(demandService.getAllDemandEntries(email), HttpStatus.OK);
     }
 
     @GetMapping(path = "/api/v1/demand/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getDemandById(@PathVariable("id") Long id) {
-        return new ResponseEntity<>(demandService.getDemandById(id), HttpStatus.OK);
+    public ResponseEntity<?> getDemandById(@PathVariable("id") Long id, HttpServletRequest request) {
+        final String token = jwtAuthenticationService.extractTokenFromRequest(request);
+        final String email = jwtAuthenticationService.getEmailFromToken(token);
+        return new ResponseEntity<>(demandService.getDemandById(id, email), HttpStatus.OK);
     }
 
     @PostMapping(

@@ -6,7 +6,7 @@ INSERT INTO ghp_board.news (id, news_author, news_date, news_image_id, news_text
 
 INSERT INTO ghp_board.user (id, email, enabled, locked, password, user_role) VALUES (1, 'michaelstoelting@gmail.com', true, false, '$2a$10$xOPlSqT9VwCTx1RQZFRxQ.HQxMEQMlkw5P7nCQcBfe/BavxD.ZShO', 1);
 INSERT INTO ghp_board.user (id, email, enabled, locked, password, user_role) VALUES (2, 'lars@gmail.com', true, false, '$2a$10$xOPlSqT9VwCTx1RQZFRxQ.HQxMEQMlkw5P7nCQcBfe/BavxD.ZShO', 1);
-INSERT INTO ghp_board.user (id, email, enabled, locked, password, user_role) VALUES (3, 'svneja@gmail.com', true, false, '$2a$10$xOPlSqT9VwCTx1RQZFRxQ.HQxMEQMlkw5P7nCQcBfe/BavxD.ZShO', 1);
+INSERT INTO ghp_board.user (id, email, enabled, locked, password, user_role) VALUES (3, 'svenja@gmail.com', true, false, '$2a$10$xOPlSqT9VwCTx1RQZFRxQ.HQxMEQMlkw5P7nCQcBfe/BavxD.ZShO', 1);
 
 INSERT INTO ghp_board.demand (id, demand_title, demand_text, demand_date, demand_name) VALUES (1, 'Test Anfrage 1', 'Dies ist ein Beispiel', '2022-06-01 21:16:20', 'Lars');
 INSERT INTO ghp_board.demand (id, demand_title, demand_text, demand_date, demand_name) VALUES (2, 'Test Anfrage 2', 'Dies ist ein Beispiel 1', '2022-05-01 21:16:20', 'Lars');

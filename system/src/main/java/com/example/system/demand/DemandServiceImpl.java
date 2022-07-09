@@ -3,6 +3,8 @@ package com.example.system.demand;
 import com.example.system.attachment.Attachment;
 import com.example.system.attachment.AttachmentResponse;
 import com.example.system.attachment.AttachmentServiceImpl;
+import com.example.system.user.UserService;
+import com.example.system.voting.VotingService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,28 +22,76 @@ public class DemandServiceImpl implements DemandService {
 
     private DemandRepository demandRepository;
     private AttachmentServiceImpl attachmentServiceImpl;
+    private VotingService votingService;
+    private UserService userService;
 
     @Override
-    public List<Demand> getAllDemandEntries() {
-        return demandRepository.findAllByOrderByDemandDateDesc();
+    public List<DemandResponseDto> getAllDemandEntries(String email) {
+        var response = new ArrayList<DemandResponseDto>();
+        var demands = demandRepository.findAllByOrderByDemandDateDesc();
+        var user = userService.loadUserByMail(email);
+
+        demands.forEach(demand -> {
+            var images = new ArrayList<AttachmentResponse>();
+            var voting = votingService.getVotingValue(demand);
+            var personalVoting = votingService.getVotingByUser(demand, user);
+            Long likes;
+            Long dislikes;
+            Optional<Boolean> personalVote;
+
+            if (voting.isEmpty()) {
+                likes = 0L;
+                dislikes = 0L;
+            } else {
+                likes = voting.get().getCountLikes();
+                dislikes = voting.get().getCountDislikes();
+            }
+
+            demand.getDemandImages().forEach(image -> {
+                    images.add(new AttachmentResponse(
+                            image.getId(),
+                            attachmentServiceImpl.getAttachmentAsBase64(image.getId())
+                    ));
+            });
+
+            response.add(new DemandResponseDto(
+                    demand.getId(),
+                    demand.getDemandDate(),
+                    demand.getDemandTitle(),
+                    demand.getDemandText(),
+                    demand.getDemandName(),
+                    images,
+                    likes,
+                    dislikes,
+                    personalVoting
+            ));
+        });
+
+        return response;
     }
 
     @Override
-    public DemandEntryDto getDemandById(Long id) {
+    public DemandResponseDto getDemandById(Long id, String email) {
         var demand = demandRepository.findById(id).orElseThrow(() -> new NotFoundException("Keine Anfrage mit der id " + id + " gefunden"));
         List<AttachmentResponse> attachments = new ArrayList<>();
+
+        var voting = votingService.getVotingValue(demand);
+        var personalVoting = votingService.getVotingByUser(demand, userService.loadUserByMail(email));
 
         if(demand.getDemandImages() != null) {
             attachments = attachmentServiceImpl.getAttachmentListAsBase64(id);
         }
 
-        return new DemandEntryDto(
+        return new DemandResponseDto(
                 demand.getId(),
                 demand.getDemandDate(),
                 demand.getDemandTitle(),
                 demand.getDemandText(),
                 demand.getDemandName(),
-                attachments
+                attachments,
+                voting.get().getCountLikes(),
+                voting.get().getCountDislikes(),
+                personalVoting
         );
     }
 
