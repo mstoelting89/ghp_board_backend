@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,8 +27,6 @@ public class BlogController {
     public ResponseEntity<?> getAllBlogPosts(HttpServletRequest request) {
         return new ResponseEntity<>(blogService.getAllBlogPosts(), HttpStatus.OK);
     }
-
-    // TODO: create get detail data
 
     @PostMapping(
             path = "/api/v1/blog",
@@ -45,5 +44,13 @@ public class BlogController {
         BlogEntryDto blogEntryDto = mapper.readValue(blogData, BlogEntryDto.class);
 
         return new ResponseEntity<>(blogService.insertNewBlogEntry(blogEntryDto, files), HttpStatus.OK);
+    }
+
+    @DeleteMapping(
+            path = "/api/v1/blog/{id}"
+    )
+    public ResponseEntity<?> deleteBlog(@PathVariable("id") Long blogDeleteId) throws IOException {
+        blogService.deleteBlogEntry(blogDeleteId);
+        return new ResponseEntity<>("", HttpStatus.OK);
     }
 }

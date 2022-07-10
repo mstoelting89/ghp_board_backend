@@ -78,8 +78,8 @@ public class DemandController {
     @DeleteMapping(
             path = "/api/v1/demand/{id}"
     )
-    public ResponseEntity<?> deleteDemand(@PathVariable("id") Long newsDeleteId) throws IOException {
-        demandService.deleteNewsEntry(newsDeleteId);
+    public ResponseEntity<?> deleteDemand(@PathVariable("id") Long demandDeleteId) throws IOException {
+        demandService.deleteDemandEntry(demandDeleteId);
         return new ResponseEntity<>("", HttpStatus.OK);
     }
 

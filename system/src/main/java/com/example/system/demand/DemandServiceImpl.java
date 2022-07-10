@@ -190,7 +190,7 @@ public class DemandServiceImpl implements DemandService {
     }
 
     @Override
-    public void deleteNewsEntry(Long demandId) {
+    public void deleteDemandEntry(Long demandId) {
         var demandEntry = demandRepository.findById(demandId)
                 .orElseThrow(() -> new NotFoundException("Löschen fehlgeschlagen - Eintrag mit der ID " + demandId + " nicht gefunden"));
 

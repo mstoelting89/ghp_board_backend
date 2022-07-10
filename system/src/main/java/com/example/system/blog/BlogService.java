@@ -11,4 +11,6 @@ public interface BlogService {
     List<BlogResponseDto> getAllBlogPosts();
 
     Blog insertNewBlogEntry(BlogEntryDto blogEntryDto, Optional<List<MultipartFile>> file);
+
+    void deleteBlogEntry(Long id);
 }

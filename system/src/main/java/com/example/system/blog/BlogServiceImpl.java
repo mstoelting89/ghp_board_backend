@@ -3,7 +3,6 @@ package com.example.system.blog;
 import com.example.system.attachment.Attachment;
 import com.example.system.attachment.AttachmentResponse;
 import com.example.system.attachment.AttachmentService;
-import com.example.system.demand.Demand;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,5 +56,13 @@ public class BlogServiceImpl implements BlogService {
                 blogEntryDto.getBlogAuthor(),
                 attachments
         ));
+    }
+
+    @Override
+    public void deleteBlogEntry(Long id) {
+        var blogEntry = blogRespository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Löschen fehlgeschlagen - Eintrag mit der ID " + id + " nicht gefunden"));
+
+        blogRespository.delete(blogEntry);
     }
 }
