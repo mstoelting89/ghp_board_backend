@@ -37,11 +37,14 @@ public class Blog {
     @OneToMany(cascade = CascadeType.ALL)
     private List<Attachment> blogImages;
 
-    public Blog(LocalDateTime blogDate, String blogTitle, String blogText, String blogAuthor, List<Attachment> attachments) {
+    private Boolean isPublic;
+
+    public Blog(LocalDateTime blogDate, String blogTitle, String blogText, String blogAuthor, List<Attachment> attachments, Boolean isPublic) {
         this.blogDate = blogDate;
         this.blogTitle = blogTitle;
         this.blogText = blogText;
         this.blogAuthor = blogAuthor;
         this.blogImages = attachments;
+        this.isPublic = isPublic;
     }
 }

@@ -13,4 +13,6 @@ public interface BlogService {
     Blog insertNewBlogEntry(BlogEntryDto blogEntryDto, Optional<List<MultipartFile>> file);
 
     void deleteBlogEntry(Long id);
+
+    Blog updateDemandEntry(BlogEntryDto blogEntryDto, Long blogId, Optional<List<MultipartFile>> files);
 }

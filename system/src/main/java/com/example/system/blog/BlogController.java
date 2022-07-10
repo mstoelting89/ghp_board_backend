@@ -46,6 +46,24 @@ public class BlogController {
         return new ResponseEntity<>(blogService.insertNewBlogEntry(blogEntryDto, files), HttpStatus.OK);
     }
 
+    @PutMapping(
+            path = "/api/v1/blog",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<?> updateBlogEntry(
+            @RequestParam Optional<List<MultipartFile>> files,
+            @RequestParam Long blogId,
+            @RequestParam String blogData
+    ) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper()
+                .findAndRegisterModules()
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        BlogEntryDto blogEntryDto = mapper.readValue(blogData, BlogEntryDto.class);
+
+        return new ResponseEntity<>(blogService.updateDemandEntry(blogEntryDto, blogId, files), HttpStatus.OK);
+    }
+
     @DeleteMapping(
             path = "/api/v1/blog/{id}"
     )

@@ -72,6 +72,7 @@ CREATE TABLE `blog` (
     `blog_date` datetime NOT NULL,
     `blog_text` varchar(255) NOT NULL,
     `blog_title` varchar(255) NOT NULL,
+    `is_public` bit(1) DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

@@ -18,4 +18,5 @@ public class BlogEntryDto {
     private String blogText;
     private String blogAuthor;
     private List<AttachmentResponse> blogImages;
+    private Boolean isPublic;
 }
