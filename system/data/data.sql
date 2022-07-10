@@ -15,3 +15,7 @@ INSERT INTO ghp_board.demand (id, demand_title, demand_text, demand_date, demand
 INSERT INTO ghp_board.blog (id, blog_author, blog_date, blog_text, blog_title, is_public) VALUES (1, 'Lars', '2022-06-01 21:16:20', 'Dies ist der Text von Blogartikel 1', 'Blogartikel 1', true);
 INSERT INTO ghp_board.blog (id, blog_author, blog_date, blog_text, blog_title, is_public) VALUES (2, 'Lars', '2022-05-01 21:16:20', 'Dies ist der Text von Blogartikel 2', 'Blogartikel 2', true);
 INSERT INTO ghp_board.blog (id, blog_author, blog_date, blog_text, blog_title, is_public) VALUES (3, 'Lars', '2022-04-01 21:16:20', 'Dies ist der Text von Blogartikel 3', 'Blogartikel 3', true);
+
+INSERT INTO ghp_board.instrument (id, instrument_date, instrument_title, instrument_image_id) VALUES (1, '2022-06-01 21:16:20', 'Instrument 1', null);
+INSERT INTO ghp_board.instrument (id, instrument_date, instrument_title, instrument_image_id) VALUES (2, '2022-05-01 21:16:20', 'Instrument 2', null);
+INSERT INTO ghp_board.instrument (id, instrument_date, instrument_title, instrument_image_id) VALUES (3, '2022-04-01 21:16:20', 'Instrument 3', null);

@@ -85,5 +85,15 @@ CREATE TABLE `blog_blog_images` (
     CONSTRAINT `FKpjrsp48v4nrg53dwg5ilseqv5` FOREIGN KEY (`blog_id`) REFERENCES `blog` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE `instrument` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `instrument_date` datetime NOT NULL,
+    `instrument_title` varchar(255) NOT NULL,
+    `instrument_image_id` bigint(20) DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FK95a9j7ucg5fwottoimwy4rncr` (`instrument_image_id`),
+    CONSTRAINT `FK95a9j7ucg5fwottoimwy4rncr` FOREIGN KEY (`instrument_image_id`) REFERENCES `attachment` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 
 
