@@ -16,7 +16,7 @@ public interface AttachmentService {
 
     String getAttachmentAsBase64(Long id);
 
-    List<AttachmentResponse> getAttachmentListAsBase64(Long id);
+    List<AttachmentResponse> getAttachmentListAsBase64(Long id, List<Attachment> attachments);
 
     void deleteImage(Long id) throws IOException;
 }

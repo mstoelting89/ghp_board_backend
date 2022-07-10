@@ -79,7 +79,8 @@ public class DemandServiceImpl implements DemandService {
         var personalVoting = votingService.getVotingByUser(demand, userService.loadUserByMail(email));
 
         if(demand.getDemandImages() != null) {
-            attachments = attachmentServiceImpl.getAttachmentListAsBase64(id);
+            var demandAttachments = demandRepository.getAttachmentById(id);
+            attachments = attachmentServiceImpl.getAttachmentListAsBase64(id, demandAttachments);
         }
 
         return new DemandResponseDto(

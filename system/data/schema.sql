@@ -64,4 +64,25 @@ CREATE TABLE `voting` (
     KEY `FK9bj0a6525byvwq3qgn4uyjpiv` (`user_id`),
     CONSTRAINT `FK9bj0a6525byvwq3qgn4uyjpiv` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
     CONSTRAINT `FKibnwq0skydlugpci9x962k2mq` FOREIGN KEY (`demand_id`) REFERENCES `demand` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `blog` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `blog_author` varchar(255) NOT NULL,
+    `blog_date` datetime NOT NULL,
+    `blog_text` varchar(255) NOT NULL,
+    `blog_title` varchar(255) NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `blog_blog_images` (
+    `blog_id` bigint(20) NOT NULL,
+    `blog_images_id` bigint(20) NOT NULL,
+    UNIQUE KEY `UK_eh1k2qsd72x8ebkteyjeiaf54` (`blog_images_id`),
+    KEY `FKpjrsp48v4nrg53dwg5ilseqv5` (`blog_id`),
+    CONSTRAINT `FKcwtcs0h5xroy7ucm6d3x9vu75` FOREIGN KEY (`blog_images_id`) REFERENCES `attachment` (`id`),
+    CONSTRAINT `FKpjrsp48v4nrg53dwg5ilseqv5` FOREIGN KEY (`blog_id`) REFERENCES `blog` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+

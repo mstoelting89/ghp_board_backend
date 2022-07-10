@@ -81,9 +81,8 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
-    public List<AttachmentResponse> getAttachmentListAsBase64(Long id) {
+    public List<AttachmentResponse> getAttachmentListAsBase64(Long id, List<Attachment> attachments) {
         var encodedImages = new ArrayList<AttachmentResponse>();
-        var attachments = attachmentRepository.getAttachmentById(id);
 
         attachments.forEach(attachment -> {
             var attachmentResponse = new AttachmentResponse();
