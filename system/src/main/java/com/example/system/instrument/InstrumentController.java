@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -44,5 +43,13 @@ public class InstrumentController {
         Instrument instrumentDto = mapper.readValue(instrumentData, Instrument.class);
 
         return new ResponseEntity<>(instrumentService.insertNewDemandEntry(instrumentDto, file), HttpStatus.OK);
+    }
+
+    @DeleteMapping(
+            path = "/api/v1/instrument/{id}"
+    )
+    public ResponseEntity<?> deleteInstrument(@PathVariable("id") Long instrumentDeleteId) throws IOException {
+        instrumentService.deleteInstrumentEntry(instrumentDeleteId);
+        return new ResponseEntity<>("", HttpStatus.OK);
     }
 }

@@ -1,7 +1,6 @@
 package com.example.system.instrument;
 
 import com.example.system.attachment.AttachmentService;
-import com.example.system.news.News;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,5 +47,13 @@ public class InstrumentServiceImpl implements InstrumentService {
                 instrumentDto.getInstrumentTitle(),
                 attachment
         ));
+    }
+
+    @Override
+    public void deleteInstrumentEntry(Long instrumentDeleteId) {
+        var instrumentEntry = instrumentRepository.findById(instrumentDeleteId)
+                .orElseThrow(() -> new NotFoundException("Löschen fehlgeschlagen - Eintrag mit der ID " + instrumentDeleteId + " nicht gefunden"));
+
+        instrumentRepository.delete(instrumentEntry);
     }
 }
