@@ -56,4 +56,22 @@ public class InstrumentServiceImpl implements InstrumentService {
 
         instrumentRepository.delete(instrumentEntry);
     }
+
+    @Override
+    public Instrument updateInstrumentEntry(Long instrumentUpdateId, Instrument instrumentDto, Optional<MultipartFile> file) throws IOException {
+        var instrumentEntry = instrumentRepository.findById(instrumentUpdateId)
+                .orElseThrow(() -> new NotFoundException("Kein Eintrag mit der Id " + instrumentUpdateId + " gefunden"));
+
+        var attachment = attachmentService.handelAttachmentUpload(file);
+
+        if (instrumentDto.getInstrumentImage() != null) {
+            attachmentService.deleteImage(instrumentEntry.getInstrumentImage().getId());
+        }
+
+        instrumentEntry.setInstrumentTitle(instrumentDto.getInstrumentTitle());
+        instrumentEntry.setInstrumentDate(instrumentDto.getInstrumentDate());
+        instrumentEntry.setInstrumentImage(attachment);
+
+        return instrumentRepository.save(instrumentEntry);
+    }
 }

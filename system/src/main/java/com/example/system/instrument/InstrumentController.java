@@ -1,6 +1,7 @@
 package com.example.system.instrument;
 
 import com.example.system.demand.DemandEntryDto;
+import com.example.system.news.NewsEntryDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -43,6 +44,25 @@ public class InstrumentController {
         Instrument instrumentDto = mapper.readValue(instrumentData, Instrument.class);
 
         return new ResponseEntity<>(instrumentService.insertNewDemandEntry(instrumentDto, file), HttpStatus.OK);
+    }
+
+    @PutMapping(
+            path = "/api/v1/instrument",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<?> updateNews(
+            @RequestParam("file") Optional<MultipartFile> file,
+            @RequestParam("instrumentUpdateId") Long instrumentUpdateId,
+            @RequestParam("instrumentData") String instrumentUpdateString,
+            HttpServletRequest request) throws IOException
+    {
+        ObjectMapper mapper = new ObjectMapper()
+                .findAndRegisterModules()
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        Instrument instrumentDto = mapper.readValue(instrumentUpdateString, Instrument.class);
+
+        return new ResponseEntity<>(instrumentService.updateInstrumentEntry(instrumentUpdateId, instrumentDto, file), HttpStatus.OK);
     }
 
     @DeleteMapping(

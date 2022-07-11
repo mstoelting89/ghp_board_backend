@@ -12,4 +12,6 @@ public interface InstrumentService {
     Instrument insertNewDemandEntry(Instrument instrumentDto, Optional<MultipartFile> file) throws IOException;
 
     void deleteInstrumentEntry(Long instrumentDeleteId);
+
+    Instrument updateInstrumentEntry(Long instrumentUpdateId, Instrument instrumentDto, Optional<MultipartFile> file) throws IOException;
 }
