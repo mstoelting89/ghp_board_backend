@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
+
 @RestController
 @CrossOrigin
 @AllArgsConstructor
@@ -20,9 +22,12 @@ public class UserController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<?> createUser(@RequestBody UserRegistrationDto newUser) {
-        System.out.println(newUser.getEmail());
-        System.out.println(newUser.getUserRole());
         return new ResponseEntity<>(userService.createUser(newUser), HttpStatus.OK);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<?> handlerIllegalStateException(IllegalStateException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
 }

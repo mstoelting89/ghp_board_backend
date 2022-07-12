@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 public interface TokenService {
 
-    Token createToken(String token, LocalDateTime createdAt, LocalDateTime expiresAt, User user);
+    Token createToken(LocalDateTime createdAt, LocalDateTime expiresAt, User user);
 
     Token getToken(String token);
 

@@ -1,11 +1,16 @@
 USE ghp_board;
 
-DROP TABLE IF EXISTS `news`;
 DROP TABLE IF EXISTS `demand_demand_images`;
-DROP TABLE IF EXISTS `attachment`;
+DROP TABLE IF EXISTS `blog_blog_images`;
+DROP TABLE IF EXISTS `news`;
 DROP TABLE IF EXISTS `voting`;
-DROP TABLE IF EXISTS `user`;
 DROP TABLE IF EXISTS `demand`;
+DROP TABLE IF EXISTS `voting`;
+DROP TABLE IF EXISTS `blog`;
+DROP TABLE IF EXISTS `instrument`;
+DROP TABLE IF EXISTS `attachment`;
+DROP TABLE IF EXISTS `token`;
+DROP TABLE IF EXISTS `user`;
 
 
 CREATE TABLE `attachment` (
@@ -93,6 +98,18 @@ CREATE TABLE `instrument` (
     PRIMARY KEY (`id`),
     KEY `FK95a9j7ucg5fwottoimwy4rncr` (`instrument_image_id`),
     CONSTRAINT `FK95a9j7ucg5fwottoimwy4rncr` FOREIGN KEY (`instrument_image_id`) REFERENCES `attachment` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `token` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `confirmed_at` datetime DEFAULT NULL,
+    `created_at` datetime NOT NULL,
+    `expires_at` datetime NOT NULL,
+    `token` varchar(255) NOT NULL,
+    `user_id` bigint(20) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FKe32ek7ixanakfqsdaokm4q9y2` (`user_id`),
+    CONSTRAINT `FKe32ek7ixanakfqsdaokm4q9y2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 

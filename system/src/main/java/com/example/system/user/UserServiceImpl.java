@@ -1,6 +1,8 @@
 package com.example.system.user;
 
 import com.example.system.email.EmailService;
+import com.example.system.token.Token;
+import com.example.system.token.TokenService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,6 +11,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserDetailsService, UserService {
@@ -16,6 +20,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     private UserRepository userRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private EmailService emailService;
+    private TokenService tokenService;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -49,7 +54,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
         String password = RandomStringUtils.randomAlphanumeric(12);
 
-        User savedUser = userRepository.save(new User(
+        var savedUser = userRepository.save(new User(
                         userRegistrationDto.getEmail(),
                         bCryptPasswordEncoder.encode(password),
                         userRole,
@@ -57,13 +62,15 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                         false)
                 );
 
-        emailService.send("michaelstoelting@gmail.com", "Dies ist das initiale Password für " + savedUser.getEmail() + ": " + password);
-        // TODO:
-        // - [x] create UserDto
-        // - [x] Hash Password
-        // - [x] save User with initial password
-        // - [x] set isEnabled to false
-        // - [x] send email to User with initial password
+        var token = tokenService.createToken(
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(7),
+                savedUser
+        );
+
+        String link = "<a href='localhost:8081/login?confirmToken=" + token.getToken() + "'>Zur Anmeldung</a>";
+        String email = "Hallo, du wurdest eingeladen am Guitarhearts Project teilzunehmen. Über diesen Link kannst du dich anmeldern: " + link;
+        emailService.send("michaelstoelting@gmail.com", email);
 
         return savedUser;
 

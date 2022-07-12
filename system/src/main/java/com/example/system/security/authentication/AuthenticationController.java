@@ -23,22 +23,6 @@ public class AuthenticationController {
 
     @PostMapping
     public ResponseEntity<?> login(@RequestBody AuthenticationDto authenticationDto) {
-        //TODO: Userverwaltung: Übersicht aller User
-        // - Neuanlage von Usern (Email -> Dann Mail mit Startpasswort)
-        // - Token Funktionalität implementieren
-        // - Passwort zurücksetzen
-
-        //TODO: Prioritäten
-        // - 1.[x] Token Entity erstellen inkl. service etc.
-        // - 2.[x] Emailversand einbinden
-        // - 3.[x] Möglichkeit erstellen, einen neuen User anzulegen
-        // - 4.[x] Erstellen Initialpassword Email mit Link zum setzen des Passwortes mit token
-        // - 5.[]
-
-        // - 5.[] Erstellen Passwort vergessen Email
-
-        // - [] check enabled
-        // - [] return value so the user is forced to set a new password
 
         JwtTokenDto token = authenticationService.generateJwtToken(authenticationDto.getEmail(), authenticationDto.getPassword());
         User user = userServiceImpl.loadUserByMail(authenticationDto.getEmail());
@@ -54,6 +38,7 @@ public class AuthenticationController {
     @PostMapping(path = "/password/reset")
     @ResponseBody
     public String resetPassword() {
+
         return "foo";
     }
 
@@ -61,4 +46,5 @@ public class AuthenticationController {
     public ResponseEntity<?> handlerEntityNotFoundException(EntityNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+
 }
