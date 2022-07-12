@@ -32,6 +32,14 @@ public class User implements UserDetails {
     private Boolean enabled;
     private Boolean locked;
 
+    public User(String email, String password, UserRole userRole, Boolean enabled, Boolean locked) {
+        this.email = email;
+        this.password = password;
+        this.userRole = userRole;
+        this.enabled = enabled;
+        this.locked = locked;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();

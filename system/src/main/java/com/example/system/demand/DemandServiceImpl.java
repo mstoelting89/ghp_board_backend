@@ -3,7 +3,7 @@ package com.example.system.demand;
 import com.example.system.attachment.Attachment;
 import com.example.system.attachment.AttachmentResponse;
 import com.example.system.attachment.AttachmentServiceImpl;
-import com.example.system.user.UserService;
+import com.example.system.user.UserServiceImpl;
 import com.example.system.voting.VotingService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,13 +23,13 @@ public class DemandServiceImpl implements DemandService {
     private DemandRepository demandRepository;
     private AttachmentServiceImpl attachmentServiceImpl;
     private VotingService votingService;
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     @Override
     public List<DemandResponseDto> getAllDemandEntries(String email) {
         var response = new ArrayList<DemandResponseDto>();
         var demands = demandRepository.findAllByOrderByDemandDateDesc();
-        var user = userService.loadUserByMail(email);
+        var user = userServiceImpl.loadUserByMail(email);
 
         demands.forEach(demand -> {
             var images = new ArrayList<AttachmentResponse>();
@@ -76,7 +76,7 @@ public class DemandServiceImpl implements DemandService {
         List<AttachmentResponse> attachments = new ArrayList<>();
 
         var voting = votingService.getVotingValue(demand);
-        var personalVoting = votingService.getVotingByUser(demand, userService.loadUserByMail(email));
+        var personalVoting = votingService.getVotingByUser(demand, userServiceImpl.loadUserByMail(email));
 
         if(demand.getDemandImages() != null) {
             var demandAttachments = demandRepository.getAttachmentById(id);

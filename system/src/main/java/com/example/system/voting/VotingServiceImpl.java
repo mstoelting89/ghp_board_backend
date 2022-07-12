@@ -3,7 +3,7 @@ package com.example.system.voting;
 import com.example.system.demand.Demand;
 import com.example.system.demand.DemandRepository;
 import com.example.system.user.User;
-import com.example.system.user.UserService;
+import com.example.system.user.UserServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
@@ -15,14 +15,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @AllArgsConstructor
 public class VotingServiceImpl implements VotingService{
 
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
     private final VotingRepository votingRepository;
     private final DemandRepository demandRepository;
 
     @Override
     public VotingResponseDto setVotingValue(VotingEntryDto votingEntryDto, String email) {
         AtomicBoolean newValue = new AtomicBoolean(false);
-        User user = userService.loadUserByMail(email);
+        User user = userServiceImpl.loadUserByMail(email);
         Demand demand = demandRepository.findById(votingEntryDto.getDemandId())
                 .orElseThrow(() -> new NotFoundException("Anfrage nicht gefunden"));
 
