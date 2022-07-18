@@ -1,6 +1,8 @@
 package com.example.system.user;
 
 import com.example.system.email.EmailService;
+import com.example.system.security.authentication.RequestPasswordDto;
+import com.example.system.security.authentication.ResetPasswordDto;
 import com.example.system.token.Token;
 import com.example.system.token.TokenService;
 import lombok.AllArgsConstructor;
@@ -25,12 +27,13 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("Die Email existiert nicht."));
     }
 
+    @Override
     public User loadUserByMail(String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("Die Email existiert nicht."));
     }
 
     @Override
@@ -68,11 +71,44 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 savedUser
         );
 
-        String link = "<a href='localhost:8081/login?confirmToken=" + token.getToken() + "'>Zur Anmeldung</a>";
+        String link = "<a href='http://localhost:8081/login?confirmToken=" + token.getToken() + "'>Zur Anmeldung</a>";
         String email = "Hallo, du wurdest eingeladen am Guitarhearts Project teilzunehmen. Über diesen Link kannst du dich anmeldern: " + link;
         emailService.send("michaelstoelting@gmail.com", email);
 
         return savedUser;
 
+    }
+
+    @Override
+    public String resetPassword(ResetPasswordDto resetPasswordDto) throws UsernameNotFoundException {
+        // get user from token
+        Token token = tokenService.getToken(resetPasswordDto.getConfirmToken());
+        if (token != null) {
+            User user = token.getUser();
+            user.setPassword(bCryptPasswordEncoder.encode(resetPasswordDto.getPassword()));
+            userRepository.save(user);
+            return "Password erfolgreich gesetzt";
+        } else {
+            throw new UsernameNotFoundException("Die Email existiert nicht.");
+        }
+
+    }
+
+    @Override
+    public String requestPassword(RequestPasswordDto requestPasswordDto) {
+        User user = userRepository.findByEmail(requestPasswordDto.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("Die Email existiert nicht."));
+
+        var token = tokenService.createToken(
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(7),
+                user
+        );
+
+        String link = "<a href='http://localhost:8081/login?confirmToken=" + token.getToken() + "'>Zur Anmeldung</a>";
+        String email = "Hallo, du wurdest eingeladen am Guitarhearts Project teilzunehmen. Über diesen Link kannst du dich anmeldern: " + link;
+        emailService.send("michaelstoelting@gmail.com", email);
+
+        return "Eine Email zum Zurücksetzen des Passworts wurde verschickt";
     }
 }
