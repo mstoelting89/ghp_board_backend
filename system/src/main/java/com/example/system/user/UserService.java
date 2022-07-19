@@ -7,7 +7,7 @@ public interface UserService {
 
     User loadUserByMail(String email);
 
-    User createUser(UserRegistrationDto userRegistrationDto);
+    String createUser(UserRegistrationDto userRegistrationDto);
 
     String resetPassword(ResetPasswordDto resetPasswordDto);
 

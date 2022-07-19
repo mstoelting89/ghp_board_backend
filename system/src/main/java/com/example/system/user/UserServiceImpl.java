@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.time.LocalDateTime;
 
@@ -37,7 +38,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public User createUser(UserRegistrationDto userRegistrationDto) {
+    public String createUser(UserRegistrationDto userRegistrationDto) {
         // check if user exists;
         boolean userExists = userRepository.findByEmail(userRegistrationDto.getEmail()).isPresent();
 
@@ -75,7 +76,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         String email = "Hallo, du wurdest eingeladen am Guitarhearts Project teilzunehmen. Über diesen Link kannst du dich anmeldern: " + link;
         emailService.send("michaelstoelting@gmail.com", email);
 
-        return savedUser;
+        return "User " + savedUser.getEmail() + " erfolgreich angelegt. Passwort Email wurde verschickt.";
 
     }
 
