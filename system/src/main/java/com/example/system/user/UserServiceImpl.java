@@ -7,14 +7,21 @@ import com.example.system.token.Token;
 import com.example.system.token.TokenService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.context.IExpressionContext;
+import org.thymeleaf.linkbuilder.ILinkBuilder;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.webjars.NotFoundException;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -24,6 +31,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private EmailService emailService;
     private TokenService tokenService;
+    private SpringTemplateEngine springTemplateEngine;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -72,9 +80,18 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 savedUser
         );
 
-        String link = "<a href='http://localhost:8081/login?confirmToken=" + token.getToken() + "'>Zur Anmeldung</a>";
-        String email = "Hallo, du wurdest eingeladen am Guitarhearts Project teilzunehmen. Über diesen Link kannst du dich anmeldern: " + link;
-        emailService.send("michaelstoelting@gmail.com", email);
+        String link = "http://localhost:8081/login?confirmToken=" + token.getToken();
+
+        Map<String, Object> model = new HashMap<String, Object>();
+        model.put("email", savedUser.getEmail());
+        model.put("link", link);
+        Context context = new Context();
+        context.setVariables(model);
+
+        String html = springTemplateEngine.process("reset-password-template", context);
+
+        //String email = "Hallo, du wurdest eingeladen am Guitarhearts Project teilzunehmen. Über diesen Link kannst du dich anmeldern: " + link;
+        emailService.send("michaelstoelting@gmail.com", html, "Einladung zur Teilnahme am Guitar Hearts Project");
 
         return "User " + savedUser.getEmail() + " erfolgreich angelegt. Passwort Email wurde verschickt.";
 
@@ -108,7 +125,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
         String link = "<a href='http://localhost:8081/login?confirmToken=" + token.getToken() + "'>Zur Anmeldung</a>";
         String email = "Hallo, du wurdest eingeladen am Guitarhearts Project teilzunehmen. Über diesen Link kannst du dich anmeldern: " + link;
-        emailService.send("michaelstoelting@gmail.com", email);
+        emailService.send("michaelstoelting@gmail.com", email, "Guitar Hearts Project: Passwort zurücksetzen");
 
         return "Eine Email zum Zurücksetzen des Passworts wurde verschickt";
     }

@@ -1,4 +1,4 @@
-package com.example.system.security;
+package com.example.system.config;
 
 import com.example.system.security.jwt.JwtAuthenticationEntrypoint;
 import com.example.system.security.jwt.JwtAuthenticationProvider;
