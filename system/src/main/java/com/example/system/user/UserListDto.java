@@ -7,7 +7,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class UserRegistrationDto {
+public class UserListDto {
+    private Long id;
     private String email;
     private UserRole userRole;
+    private Boolean isEnabled;
 }
