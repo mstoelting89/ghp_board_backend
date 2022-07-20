@@ -11,5 +11,5 @@ public interface UserService {
 
     String resetPassword(ResetPasswordDto resetPasswordDto);
 
-    String requestPassword(RequestPasswordDto requestPasswordDto);
+    String requestToResetPassword(RequestPasswordDto requestPasswordDto);
 }

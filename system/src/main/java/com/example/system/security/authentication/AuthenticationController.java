@@ -4,13 +4,11 @@ import com.example.system.email.EmailService;
 import com.example.system.security.jwt.JwtTokenDto;
 import com.example.system.user.User;
 import com.example.system.user.UserService;
-import com.example.system.user.UserServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-import org.webjars.NotFoundException;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -47,7 +45,7 @@ public class AuthenticationController {
     @PostMapping(path = "/password/request")
     @ResponseBody
     public ResponseEntity<?> requestPassword(@RequestBody RequestPasswordDto requestPasswordDto) {
-        return new ResponseEntity<String>(userService.requestPassword(requestPasswordDto), HttpStatus.OK);
+        return new ResponseEntity<String>(userService.requestToResetPassword(requestPasswordDto), HttpStatus.OK);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)

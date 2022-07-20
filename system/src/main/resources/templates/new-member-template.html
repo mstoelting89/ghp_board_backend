@@ -16,6 +16,7 @@
         }
         .content {
             font-size: 18px;
+            margin-bottom: 50px;
         }
         h3 {
             font-weight: normal;
@@ -28,6 +29,28 @@
         .header img {
             margin-left: 30px;
         }
+        .footer {
+            height: 120px;
+            width: 100%;
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+        }
+        .footer a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .footer .contact {
+            margin-left: 30px;
+        }
+        .footer .sidemenu {
+            margin-right: 30px;
+        }
+        .footer div {
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
     </style>
   </head>
 <body>
@@ -37,7 +60,7 @@
 <div class="container">
     <h3 th:text="${'Hallo ' + email + ','}"></h3>
     <div class="content">
-        Du wurdest eingeladen am Guitar Hearts Project teilzunehmen.<br>
+        Du wurdest eingeladen dich beim Guitar Hearts Project Board anzumelden, um dort aktiv am Vereinsgeschehen teilzunehmen.<br>
         Hier kannst du dich anmelden: <a th:href="${link}">Zur Anmeldung</a><br><br>
         Falls dieser Link nicht funktioniert, kannst du diesen Link kopieren und in deinem Browser einfügen:<br>
         <p th:text="${link}"></p>
@@ -47,6 +70,23 @@
     </div>
 
 </div>
-
+<div class="footer">
+    <div class="contact">
+        The Guitar Hearts Project e.V.<br>
+        guitarheartsproject@outlook.de<br>
+        067719344061<br>
+        Langgasse 17, 56348 Bornich, Germany<br>
+        <br>
+        ©2020 The Guitar Hearts Project e.V.
+    </div>
+    <div class="sidemenu">
+        <a href="https://www.guitarheartsproject.de/impressum">Impressum</a><br>
+        <br>
+        <a href="https://www.guitarheartsproject.de/satzung">Satzung</a><br>
+        <br>
+        <a href="https://www.guitarheartsproject.de/kontakt">Kontakt</a>
+        <br>
+    </div>
+</div>
 </body>
 </html>

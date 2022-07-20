@@ -88,10 +88,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         Context context = new Context();
         context.setVariables(model);
 
-        String html = springTemplateEngine.process("reset-password-template", context);
+        String html = springTemplateEngine.process("new-member-template", context);
 
-        //String email = "Hallo, du wurdest eingeladen am Guitarhearts Project teilzunehmen. Über diesen Link kannst du dich anmeldern: " + link;
-        emailService.send("michaelstoelting@gmail.com", html, "Einladung zur Teilnahme am Guitar Hearts Project");
+        emailService.send("michaelstoelting@gmail.com", html, "Guitar Hearts Project: Einladung zum Board");
 
         return "User " + savedUser.getEmail() + " erfolgreich angelegt. Passwort Email wurde verschickt.";
 
@@ -113,7 +112,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public String requestPassword(RequestPasswordDto requestPasswordDto) {
+    public String requestToResetPassword(RequestPasswordDto requestPasswordDto) {
         User user = userRepository.findByEmail(requestPasswordDto.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("Die Email existiert nicht."));
 
@@ -123,9 +122,16 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 user
         );
 
-        String link = "<a href='http://localhost:8081/login?confirmToken=" + token.getToken() + "'>Zur Anmeldung</a>";
-        String email = "Hallo, du wurdest eingeladen am Guitarhearts Project teilzunehmen. Über diesen Link kannst du dich anmeldern: " + link;
-        emailService.send("michaelstoelting@gmail.com", email, "Guitar Hearts Project: Passwort zurücksetzen");
+        String link = "http://localhost:8081/login?confirmToken=" + token.getToken();
+        Map<String, Object> model = new HashMap<>();
+        model.put("email", user.getEmail());
+        model.put("link", link);
+        Context context = new Context();
+        context.setVariables(model);
+
+        String html = springTemplateEngine.process("password-reset-template", context);
+
+        emailService.send("michaelstoelting@gmail.com", html, "Guitar Hearts Project: Passwort zurücksetzen");
 
         return "Eine Email zum Zurücksetzen des Passworts wurde verschickt";
     }
