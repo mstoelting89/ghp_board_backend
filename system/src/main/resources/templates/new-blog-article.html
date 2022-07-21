@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Spring boot eamil teplate with Thymeleaf</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'/>
+    <!-- use the font -->
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+        .container {
+            margin-left: 30px;
+            margin-right: 30px;
+        }
+        .content {
+            font-size: 18px;
+            margin-bottom: 50px;
+        }
+        h3 {
+            font-weight: normal;
+        }
+        .header {
+            height: 120px;
+            width: 100%;
+            background-color: #a21d21;
+        }
+        .header img {
+            margin-left: 30px;
+        }
+        .footer {
+            height: 120px;
+            width: 100%;
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+        }
+        .footer a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .footer .contact {
+            margin-left: 30px;
+        }
+        .footer .sidemenu {
+            margin-right: 30px;
+        }
+        .footer div {
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+    </style>
+  </head>
+<body>
+<div class="header">
+    <img src="cid:logo.png" height="100px" />
+</div>
+<div class="container">
+    <h3 th:text="${'Hallo ' + email + ','}"></h3>
+    <div class="content">
+        <p th:text="${'Es ist ein neuer Blogartikel von ' + name + ' veröffentlicht worden."></p>
+        Schau doch mal rein:
+        <p th:text="${link}"></p>
+        <br />
+        Beste Grüße, <br />
+        Der 1. Vorsitzende des Guitar Hearts Projects
+    </div>
+
+</div>
+<div class="footer">
+    <div class="contact">
+        The Guitar Hearts Project e.V.<br>
+        guitarheartsproject@outlook.de<br>
+        067719344061<br>
+        Langgasse 17, 56348 Bornich, Germany<br>
+        <br>
+        ©2020 The Guitar Hearts Project e.V.
+    </div>
+    <div class="sidemenu">
+        <a href="https://www.guitarheartsproject.de/impressum">Impressum</a><br>
+        <br>
+        <a href="https://www.guitarheartsproject.de/satzung">Satzung</a><br>
+        <br>
+        <a href="https://www.guitarheartsproject.de/kontakt">Kontakt</a>
+        <br>
+    </div>
+</div>
+</body>
+</html>

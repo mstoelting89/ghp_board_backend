@@ -27,6 +27,11 @@ public class AuthenticationController {
 
         JwtTokenDto token = authenticationService.generateJwtToken(authenticationDto.getEmail(), authenticationDto.getPassword());
         User user = userService.loadUserByMail(authenticationDto.getEmail());
+
+        if (!user.isEnabled()) {
+            throw new UsernameNotFoundException("Der Nutzer " + user.getEmail() + " ist noch nicht aktiviert. Bitte aktiviere den Nutzer über die bereits zugeschickte Email.");
+        }
+
         AuthenticationResponse authenticationResponse = new AuthenticationResponse(
                 token.getToken(),
                 user.getAuthorities(),
