@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface InstrumentService {
     List<InstrumentResponseDto> getAllInstruments();
 
-    Instrument insertNewDemandEntry(Instrument instrumentDto, Optional<MultipartFile> file) throws IOException;
+    Instrument insertNewInstrumentEntry(Instrument instrumentDto, Optional<MultipartFile> file) throws IOException;
 
     void deleteInstrumentEntry(Long instrumentDeleteId);
 

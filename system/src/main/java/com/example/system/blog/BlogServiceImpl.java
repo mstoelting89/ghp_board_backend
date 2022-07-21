@@ -4,6 +4,8 @@ import com.example.system.attachment.Attachment;
 import com.example.system.attachment.AttachmentResponse;
 import com.example.system.attachment.AttachmentService;
 import com.example.system.demand.DemandEntryDto;
+import com.example.system.email.EmailService;
+import com.example.system.user.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +22,7 @@ import java.util.Optional;
 public class BlogServiceImpl implements BlogService {
     private BlogRespository blogRespository;
     private AttachmentService attachmentService;
+    private UserService userService;
 
     @Override
     public List<BlogResponseDto> getAllBlogPosts() {
@@ -52,6 +55,11 @@ public class BlogServiceImpl implements BlogService {
         ) {
             throw new NotFoundException("Speichern fehlgeschlagen - Eintrag nicht vollständig");
         }
+
+        if (blogEntryDto.getIsPublic()) {
+            userService.sendToAll("new-blog-article", "Guitar Hearts Project: Neuer Blogartikel");
+        }
+
         return blogRespository.save(new Blog(
                 blogEntryDto.getBlogDate(),
                 blogEntryDto.getBlogTitle(),
@@ -71,7 +79,7 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public Blog updateDemandEntry(BlogEntryDto blogNewDto, Long blogId, Optional<List<MultipartFile>> files) {
+    public Blog updateBlogEntry(BlogEntryDto blogNewDto, Long blogId, Optional<List<MultipartFile>> files) {
         var blogPreviousEntry = blogRespository.findById(blogId)
                 .orElseThrow(() -> new NotFoundException("Kein Eintrag mit der Id " + blogId + " gefunden"));
         var newImageIds = new ArrayList<>();
@@ -121,6 +129,10 @@ public class BlogServiceImpl implements BlogService {
         blogPreviousEntry.setBlogText(blogNewDto.getBlogText());
         blogPreviousEntry.setBlogImages(existingAttachments);
         blogPreviousEntry.setIsPublic(blogNewDto.getIsPublic());
+
+        if (blogPreviousEntry.getIsPublic()) {
+            userService.sendToAll("new-blog-article", "Guitar Hearts Project: Neuer Blogartikel");
+        }
 
         return blogRespository.save(blogPreviousEntry);
 

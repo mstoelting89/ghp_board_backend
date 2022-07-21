@@ -20,4 +20,8 @@ public interface UserService {
     String changeUserRole(UserRegistrationDto userChangeDto);
 
     String deleteUser(Long userDeleteId);
+
+    List<User> getAllUsers();
+
+    void sendToAll(String template, String subject);
 }

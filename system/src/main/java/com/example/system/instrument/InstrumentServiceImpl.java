@@ -1,6 +1,7 @@
 package com.example.system.instrument;
 
 import com.example.system.attachment.AttachmentService;
+import com.example.system.user.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +18,7 @@ public class InstrumentServiceImpl implements InstrumentService {
 
     private InstrumentRepository instrumentRepository;
     private AttachmentService attachmentService;
+    private UserService userService;
 
     @Override
     public List<InstrumentResponseDto> getAllInstruments() {
@@ -39,8 +41,10 @@ public class InstrumentServiceImpl implements InstrumentService {
     }
 
     @Override
-    public Instrument insertNewDemandEntry(Instrument instrumentDto, Optional<MultipartFile> file) throws IOException {
+    public Instrument insertNewInstrumentEntry(Instrument instrumentDto, Optional<MultipartFile> file) throws IOException {
         var attachment = attachmentService.handelAttachmentUpload(file);
+
+        userService.sendToAll("new-instrument", "Guitar Hearts Project: Neues Instrument vorhanden");
 
         return instrumentRepository.save(new Instrument(
                 instrumentDto.getInstrumentDate(),

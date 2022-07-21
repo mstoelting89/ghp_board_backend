@@ -1,6 +1,7 @@
 package com.example.system.news;
 
 import com.example.system.attachment.AttachmentService;
+import com.example.system.user.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +17,7 @@ public class NewsServiceImpl implements NewsService{
 
     private NewsRepository newsRepository;
     private AttachmentService attachmentService;
+    private UserService userService;
 
     public List<News> getAllNewsEntries() {
         return newsRepository.findAllByOrderByNewsDateDesc();
@@ -49,6 +51,8 @@ public class NewsServiceImpl implements NewsService{
         ) {
             throw new NotFoundException("Speichern fehlgeschlagen - Eintrag nicht vollständig");
         }
+
+        userService.sendToAll("new-news-entry", "Guitar Hearts Project: Neuigkeiten auf dem Board");
 
         return newsRepository.save(new News(
                 newsEntryDto.getNewsDate(),

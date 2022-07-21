@@ -84,6 +84,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
         String html = springTemplateEngine.process("new-member-template", context);
 
+        // TODO: change email to user email
         emailService.send("michaelstoelting@gmail.com", html, "Guitar Hearts Project: Einladung zum Board");
 
         return "User " + savedUser.getEmail() + " erfolgreich angelegt. Passwort Email wurde verschickt.";
@@ -133,6 +134,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
         String html = springTemplateEngine.process("password-reset-template", context);
 
+        // TODO: change email to user email
         emailService.send("michaelstoelting@gmail.com", html, "Guitar Hearts Project: Passwort zurücksetzen");
 
         return "Eine Email zum Zurücksetzen des Passworts wurde verschickt";
@@ -175,5 +177,27 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
         userRepository.delete(user);
         return "Der User " + user.getEmail() + " wurde erfolgreich gelöscht";
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    public void sendToAll(String template, String subject) {
+        List<User> userList = getAllUsers();
+
+        userList.forEach(user -> {
+            // TODO: change email to user email
+            Map<String, Object> model = new HashMap<>();
+            model.put("email", user.getEmail());
+            Context context = new Context();
+            context.setVariables(model);
+
+            String html = springTemplateEngine.process(template, context);
+
+            emailService.send("michaelstoelting@gmail.com", html, subject);
+        });
     }
 }

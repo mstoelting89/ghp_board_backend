@@ -61,7 +61,7 @@ public class BlogController {
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         BlogEntryDto blogEntryDto = mapper.readValue(blogData, BlogEntryDto.class);
 
-        return new ResponseEntity<>(blogService.updateDemandEntry(blogEntryDto, blogId, files), HttpStatus.OK);
+        return new ResponseEntity<>(blogService.updateBlogEntry(blogEntryDto, blogId, files), HttpStatus.OK);
     }
 
     @DeleteMapping(

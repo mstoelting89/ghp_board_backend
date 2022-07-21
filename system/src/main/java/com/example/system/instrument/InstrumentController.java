@@ -43,7 +43,7 @@ public class InstrumentController {
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         Instrument instrumentDto = mapper.readValue(instrumentData, Instrument.class);
 
-        return new ResponseEntity<>(instrumentService.insertNewDemandEntry(instrumentDto, file), HttpStatus.OK);
+        return new ResponseEntity<>(instrumentService.insertNewInstrumentEntry(instrumentDto, file), HttpStatus.OK);
     }
 
     @PutMapping(
