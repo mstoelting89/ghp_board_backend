@@ -23,7 +23,7 @@ public class BlogController {
 
     private BlogService blogService;
 
-    @GetMapping(path = "/api/v1/blog", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/api/v1/blog/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllBlogPosts(HttpServletRequest request) {
         return new ResponseEntity<>(blogService.getAllBlogPosts(), HttpStatus.OK);
     }
