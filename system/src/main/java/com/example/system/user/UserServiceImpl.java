@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         String html = springTemplateEngine.process("new-member-template", context);
 
         // TODO: change email to user email
-        emailService.send("michaelstoelting@gmail.com", html, "Guitar Hearts Project: Einladung zum Board");
+        emailService.send(savedUser.getEmail(), html, "Guitar Hearts Project: Einladung zum Board");
 
         return "User " + savedUser.getEmail() + " erfolgreich angelegt. Passwort Email wurde verschickt.";
 
@@ -135,7 +135,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         String html = springTemplateEngine.process("password-reset-template", context);
 
         // TODO: change email to user email
-        emailService.send("michaelstoelting@gmail.com", html, "Guitar Hearts Project: Passwort zurücksetzen");
+        emailService.send(user.getEmail(), html, "Guitar Hearts Project: Passwort zurücksetzen");
 
         return "Eine Email zum Zurücksetzen des Passworts wurde verschickt";
     }
@@ -197,7 +197,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
             String html = springTemplateEngine.process(template, context);
 
-            emailService.send("michaelstoelting@gmail.com", html, subject);
+            emailService.send(user.getEmail(), html, subject);
         });
     }
 }
