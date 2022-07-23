@@ -74,7 +74,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 savedUser
         );
 
-        String link = "http://localhost:8081/login?confirmToken=" + token.getToken();
+        String link = "https://ghp.stoelting-michael.de/login?confirmToken=" + token.getToken();
 
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("email", savedUser.getEmail());
@@ -125,7 +125,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 user
         );
 
-        String link = "http://localhost:8081/login?confirmToken=" + token.getToken();
+        String link = "https://ghp.stoelting-michael.de/login?confirmToken=" + token.getToken();
         Map<String, Object> model = new HashMap<>();
         model.put("email", user.getEmail());
         model.put("link", link);
