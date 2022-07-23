@@ -23,7 +23,7 @@ public class InstrumentController {
 
     private InstrumentService instrumentService;
 
-    @GetMapping(path = "/api/v1/instrument", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/api/v1/instrument/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllDemands(HttpServletRequest request) {
         return new ResponseEntity<>(instrumentService.getAllInstruments(), HttpStatus.OK);
     }
