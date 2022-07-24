@@ -13,4 +13,6 @@ public interface TokenService {
     Token updateConfirmedAt(String token, LocalDateTime confirmedAt);
 
     Boolean validateToken(String token);
+
+    void deleteTokenByUser(User user);
 }
