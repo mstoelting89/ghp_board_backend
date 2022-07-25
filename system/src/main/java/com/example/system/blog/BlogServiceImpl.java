@@ -85,6 +85,7 @@ public class BlogServiceImpl implements BlogService {
         var newImageIds = new ArrayList<>();
         var toDeleteImages = new ArrayList<Attachment>();
         var existingAttachments = new ArrayList<Attachment>();
+        var previousPublic = blogPreviousEntry.getIsPublic();
 
         if (
                 blogNewDto.getBlogTitle() == null ||
@@ -130,7 +131,7 @@ public class BlogServiceImpl implements BlogService {
         blogPreviousEntry.setBlogImages(existingAttachments);
         blogPreviousEntry.setIsPublic(blogNewDto.getIsPublic());
 
-        if (blogPreviousEntry.getIsPublic()) {
+        if (blogPreviousEntry.getIsPublic() && !previousPublic) {
             userService.sendToAll("new-blog-article", "Guitar Hearts Project: Neuer Blogartikel");
         }
 
