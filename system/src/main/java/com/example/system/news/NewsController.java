@@ -44,7 +44,7 @@ public class NewsController {
             path = "/api/v1/news",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createNews(@RequestParam("file") Optional<MultipartFile> file, @RequestParam("newsData") String newsEntryString, HttpServletRequest request) throws IOException {
+    public ResponseEntity<?> createNews(@RequestParam("file") Optional<MultipartFile> file, @RequestParam("newsData") String newsEntryString) throws IOException {
 
         ObjectMapper mapper = new ObjectMapper()
                 .findAndRegisterModules()
