@@ -84,7 +84,7 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachmentResponse.setId(attachment.getId());
             byte[] image = new byte[0];
             try {
-                image = FileUtils.readFileToByteArray(new File("/upload/images/" + attachment.getLocation()));
+                image = FileUtils.readFileToByteArray(new File(attachment.getLocation()));
                 attachmentResponse.setBase64(Base64.getEncoder().encodeToString(image));
                 encodedImages.add(attachmentResponse);
             } catch (IOException e) {
