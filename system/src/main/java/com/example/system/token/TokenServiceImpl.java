@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -40,5 +41,10 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public Boolean validateToken(String token) {
         return null;
+    }
+
+    @Override
+    public void deleteTokenByUser(User user) {
+        tokenRepository.deleteAllByUser(user);
     }
 }

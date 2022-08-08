@@ -7,7 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,8 +45,6 @@ public class NewsServiceImpl implements NewsService{
 
     public News insertNewNewsEntry(NewsEntryDto newsEntryDto, Optional<MultipartFile> file) throws IOException {
 
-        var attachment = attachmentService.handelAttachmentUpload(file);
-
         if(
                 newsEntryDto.getNewsAuthor() == null ||
                 newsEntryDto.getNewsTitle() == null ||
@@ -54,13 +55,33 @@ public class NewsServiceImpl implements NewsService{
 
         userService.sendToAll("new-news-entry", "Guitar Hearts Project: Neuigkeiten auf dem Board");
 
-        return newsRepository.save(new News(
-                newsEntryDto.getNewsDate(),
-                newsEntryDto.getNewsTitle(),
-                newsEntryDto.getNewsText(),
-                newsEntryDto.getNewsAuthor(),
-                attachment
-        ));
+        if (file.isPresent()) {
+
+            if(!Files.isDirectory(Paths.get("/upload/images/"))) {
+                new File("/upload/images/").mkdirs();
+            }
+
+            var attachment = attachmentService.handelAttachmentUpload(
+                    file.orElseThrow(() -> new IllegalStateException("Beim Hochladen ist ein Fehler aufgetreten")),
+                    "/upload/images/"
+            );
+            return newsRepository.save(new News(
+                    newsEntryDto.getNewsDate(),
+                    newsEntryDto.getNewsTitle(),
+                    newsEntryDto.getNewsText(),
+                    newsEntryDto.getNewsAuthor(),
+                    attachment
+            ));
+        } else {
+            return newsRepository.save(new News(
+                    newsEntryDto.getNewsDate(),
+                    newsEntryDto.getNewsTitle(),
+                    newsEntryDto.getNewsText(),
+                    newsEntryDto.getNewsAuthor(),
+                    null
+            ));
+        }
+
 
     }
 
@@ -68,8 +89,6 @@ public class NewsServiceImpl implements NewsService{
     public News updateNewsEntry(Long newsId, NewsEntryDto newsUpdateDto, Optional<MultipartFile> file) throws IOException {
         var newsEntry = newsRepository.findById(newsId)
                 .orElseThrow(() -> new NotFoundException("Kein Eintrag mit der Id " + newsId + " gefunden"));
-
-        var attachment = attachmentService.handelAttachmentUpload(file);
 
         if (newsEntry.getNewsImage() != null) {
             newsRepository.deleteImage(newsId);
@@ -88,7 +107,15 @@ public class NewsServiceImpl implements NewsService{
         newsEntry.setNewsDate(newsUpdateDto.getNewsDate());
         newsEntry.setNewsAuthor(newsUpdateDto.getNewsAuthor());
         newsEntry.setNewsText(newsUpdateDto.getNewsText());
-        newsEntry.setNewsImage(attachment);
+        if (file.isPresent()) {
+            var attachment = attachmentService.handelAttachmentUpload(
+                    file.orElseThrow(() -> new IllegalStateException("Beim Hochladen ist ein Fehler aufgetreten")),
+                    "/upload/images/"
+            );
+            newsEntry.setNewsImage(attachment);
+        } else {
+            newsEntry.setNewsImage(null);
+        }
 
         return newsRepository.save(newsEntry);
     }

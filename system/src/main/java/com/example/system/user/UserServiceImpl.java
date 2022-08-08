@@ -174,7 +174,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     public String deleteUser(Long userDeleteId) {
         User user = userRepository.findById(userDeleteId)
                 .orElseThrow(() -> new UsernameNotFoundException("Der User existiert nicht."));
-
+        tokenService.deleteTokenByUser(user);
         userRepository.delete(user);
         return "Der User " + user.getEmail() + " wurde erfolgreich gelöscht";
     }

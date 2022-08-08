@@ -47,7 +47,7 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public Blog insertNewBlogEntry(BlogEntryDto blogEntryDto, Optional<List<MultipartFile>> file) {
         List<MultipartFile> fileList = file.orElse(Collections.emptyList());
-        List<Attachment> attachments = attachmentService.handleAttachmentUploadList(fileList);
+        List<Attachment> attachments = attachmentService.handleAttachmentUploadList(fileList, "/upload/images/");
 
         if( blogEntryDto.getBlogAuthor() == null ||
                 blogEntryDto.getBlogText() == null ||
@@ -85,6 +85,7 @@ public class BlogServiceImpl implements BlogService {
         var newImageIds = new ArrayList<>();
         var toDeleteImages = new ArrayList<Attachment>();
         var existingAttachments = new ArrayList<Attachment>();
+        var previousPublic = blogPreviousEntry.getIsPublic();
 
         if (
                 blogNewDto.getBlogTitle() == null ||
@@ -118,7 +119,7 @@ public class BlogServiceImpl implements BlogService {
 
         // handle new images
         List<MultipartFile> fileList = files.orElse(Collections.emptyList());
-        List<Attachment> newAttachments = attachmentService.handleAttachmentUploadList(fileList);
+        List<Attachment> newAttachments = attachmentService.handleAttachmentUploadList(fileList,"/upload/images/");
 
         // merge both attachment arrays (new and old)
         existingAttachments.addAll(newAttachments);
@@ -130,7 +131,7 @@ public class BlogServiceImpl implements BlogService {
         blogPreviousEntry.setBlogImages(existingAttachments);
         blogPreviousEntry.setIsPublic(blogNewDto.getIsPublic());
 
-        if (blogPreviousEntry.getIsPublic()) {
+        if (blogPreviousEntry.getIsPublic() && !previousPublic) {
             userService.sendToAll("new-blog-article", "Guitar Hearts Project: Neuer Blogartikel");
         }
 

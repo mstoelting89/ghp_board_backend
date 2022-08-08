@@ -26,24 +26,19 @@ public class AttachmentServiceImpl implements AttachmentService {
     private AttachmentRepository attachmentRepository;
 
     @Override
-    public Attachment handelAttachmentUpload(Optional<MultipartFile> file) throws IOException {
-        if (file.isPresent()) {
-            String ext = file.get().getOriginalFilename().substring(file.get().getOriginalFilename().lastIndexOf(".") + 1);
-            String fileName = String.format("%s.%s", RandomStringUtils.randomAlphanumeric(8), ext);
+    public Attachment handelAttachmentUpload(MultipartFile file, String uploadDir) throws IOException {
 
-            String uploadDir = "/upload/images/";
-            saveFile(uploadDir, fileName, file.get());
-            return attachmentRepository.save(new Attachment(fileName));
-        } else {
-            return null;
-        }
+        String ext = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
+        String fileName = String.format("%s.%s", RandomStringUtils.randomAlphanumeric(8), ext);
+
+        saveFile(uploadDir, fileName, file);
+        return attachmentRepository.save(new Attachment(uploadDir + fileName));
+
     }
 
     @Override
-    public List<Attachment> handleAttachmentUploadList(List<MultipartFile> files) {
+    public List<Attachment> handleAttachmentUploadList(List<MultipartFile> files, String uploadDir) {
         List<Attachment> fileList = new ArrayList<>();
-
-        String uploadDir = "/upload/images/";
 
         files.forEach(file -> {
             String ext = Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf(".") + 1);
@@ -54,7 +49,7 @@ public class AttachmentServiceImpl implements AttachmentService {
                 e.printStackTrace();
             }
 
-            fileList.add(attachmentRepository.save(new Attachment(fileName)));
+            fileList.add(attachmentRepository.save(new Attachment(uploadDir + fileName)));
         });
 
         return fileList;
@@ -71,7 +66,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         try {
             var fileName = attachmentRepository.findById(id).orElseThrow(() -> new NotFoundException("Bild nicht vorhanden"));
             byte[] image = new byte[0];
-            image = FileUtils.readFileToByteArray(new File("/upload/images/" + fileName.getLocation()));
+            image = FileUtils.readFileToByteArray(new File(fileName.getLocation()));
             encodedString = Base64.getEncoder().encodeToString(image);
         } catch (IOException e) {
             e.printStackTrace();
@@ -103,7 +98,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Transactional
     public void deleteImage(Long id) throws IOException {
         var attachment = attachmentRepository.findById(id).orElseThrow(() -> new NotFoundException("Bild nicht vorhanden"));
-        Path filePath = Paths.get("/upload/images/" + attachment.getLocation());
+        Path filePath = Paths.get(attachment.getLocation());
 
         if (!Files.exists(filePath)) {
             throw new NotFoundException("Datei nicht vorhanden");

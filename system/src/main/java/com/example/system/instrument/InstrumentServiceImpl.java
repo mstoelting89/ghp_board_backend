@@ -42,15 +42,28 @@ public class InstrumentServiceImpl implements InstrumentService {
 
     @Override
     public Instrument insertNewInstrumentEntry(Instrument instrumentDto, Optional<MultipartFile> file) throws IOException {
-        var attachment = attachmentService.handelAttachmentUpload(file);
 
         userService.sendToAll("new-instrument", "Guitar Hearts Project: Neues Instrument vorhanden");
 
-        return instrumentRepository.save(new Instrument(
-                instrumentDto.getInstrumentDate(),
-                instrumentDto.getInstrumentTitle(),
-                attachment
-        ));
+        if (file.isPresent()) {
+            var attachment = attachmentService.handelAttachmentUpload(
+                    file.orElseThrow(() -> new IllegalStateException("Beim Hochladen ist ein Fehler aufgetreten")),
+                    "/upload/images/"
+            );
+
+            return instrumentRepository.save(new Instrument(
+                    instrumentDto.getInstrumentDate(),
+                    instrumentDto.getInstrumentTitle(),
+                    attachment
+            ));
+        } else {
+            return instrumentRepository.save(new Instrument(
+                    instrumentDto.getInstrumentDate(),
+                    instrumentDto.getInstrumentTitle(),
+                    null
+            ));
+        }
+
     }
 
     @Override
@@ -66,15 +79,22 @@ public class InstrumentServiceImpl implements InstrumentService {
         var instrumentEntry = instrumentRepository.findById(instrumentUpdateId)
                 .orElseThrow(() -> new NotFoundException("Kein Eintrag mit der Id " + instrumentUpdateId + " gefunden"));
 
-        var attachment = attachmentService.handelAttachmentUpload(file);
-
         if (instrumentDto.getInstrumentImage() != null) {
             attachmentService.deleteImage(instrumentEntry.getInstrumentImage().getId());
         }
 
         instrumentEntry.setInstrumentTitle(instrumentDto.getInstrumentTitle());
         instrumentEntry.setInstrumentDate(instrumentDto.getInstrumentDate());
-        instrumentEntry.setInstrumentImage(attachment);
+
+        if (file.isPresent()) {
+            var attachment = attachmentService.handelAttachmentUpload(
+                    file.orElseThrow(() -> new IllegalStateException("Beim Hochladen ist ein Fehler aufgetreten")),
+                    "/upload/images/"
+            );
+            instrumentEntry.setInstrumentImage(attachment);
+        } else {
+            instrumentEntry.setInstrumentImage(null);
+        }
 
         return instrumentRepository.save(instrumentEntry);
     }

@@ -8,9 +8,9 @@ import java.util.Optional;
 
 public interface AttachmentService {
 
-    Attachment handelAttachmentUpload(Optional<MultipartFile> file) throws IOException;
+    Attachment handelAttachmentUpload(MultipartFile file, String uploadDir) throws IOException;
 
-    List<Attachment> handleAttachmentUploadList(List<MultipartFile> files);
+    List<Attachment> handleAttachmentUploadList(List<MultipartFile> files, String uploadDir);
 
     Attachment getAttachment(Long id);
 

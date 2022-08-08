@@ -19,6 +19,7 @@ import javax.mail.internet.MimeMessage;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @Service
 @AllArgsConstructor
@@ -48,6 +49,18 @@ public class EmailServiceImpl implements EmailService {
         } catch (MessagingException e) {
             LOGGER.error("failed to send email", e);
             throw new IllegalStateException("failed to send email");
+        }
+    }
+
+    @Override
+    public boolean checkEmail(String email) {
+        String regex = "^[A-Za-z0-9+_.-]+@(.+)$";
+        Pattern pattern = Pattern.compile(regex);
+
+        if(email == null) {
+            return false;
+        } else {
+            return pattern.matcher(email).matches();
         }
     }
 }
