@@ -10,5 +10,9 @@ import org.springframework.stereotype.Component;
 @Setter
 public class GhpProperties {
     public String uploadDir;
-
+    public String emailActivationLink;
+    public String emailPasswordResetLink;
+    public String emailFromValue;
+    public String emailLogoPath;
+    public String contactEmail;
 }
