@@ -23,7 +23,7 @@ CREATE TABLE `news` (
     `id` bigint(20) NOT NULL AUTO_INCREMENT,
     `news_author` varchar(255) NOT NULL,
     `news_date` datetime NOT NULL,
-    `news_text` varchar(255) NOT NULL,
+    `news_text` longtext NOT NULL,
     `news_title` varchar(255) NOT NULL,
     `news_image_id` bigint(20) DEFAULT NULL,
     PRIMARY KEY (`id`),
@@ -44,7 +44,7 @@ CREATE TABLE `user` (
 CREATE TABLE `demand` (
     `id` bigint(20) NOT NULL AUTO_INCREMENT,
     `demand_date` datetime NOT NULL,
-    `demand_text` varchar(255) NOT NULL,
+    `demand_text` longtext NOT NULL,
     `demand_title` varchar(255) NOT NULL,
     `demand_name` varchar(255) NOT NULL,
     PRIMARY KEY (`id`)
@@ -75,7 +75,7 @@ CREATE TABLE `blog` (
     `id` bigint(20) NOT NULL AUTO_INCREMENT,
     `blog_author` varchar(255) NOT NULL,
     `blog_date` datetime NOT NULL,
-    `blog_text` varchar(255) NOT NULL,
+    `blog_text` longtext NOT NULL,
     `blog_title` varchar(255) NOT NULL,
     `is_public` bit(1) DEFAULT NULL,
     PRIMARY KEY (`id`)

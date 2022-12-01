@@ -3,6 +3,7 @@ package com.example.system.attachment;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -122,7 +123,7 @@ public class AttachmentServiceImpl implements AttachmentService {
             Path filePath = uploadPath.resolve(fileName);
             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException ioe) {
-            throw new IOException("Image could not be saved");
+            throw new IOException("Image could not be saved: " + ioe.getMessage());
         }
     }
 }

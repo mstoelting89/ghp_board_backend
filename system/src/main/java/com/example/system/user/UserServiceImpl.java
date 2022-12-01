@@ -1,5 +1,6 @@
 package com.example.system.user;
 
+import com.example.system.config.GhpProperties;
 import com.example.system.email.EmailService;
 import com.example.system.security.authentication.RequestPasswordDto;
 import com.example.system.security.authentication.ResetPasswordDto;
@@ -9,6 +10,7 @@ import com.example.system.token.TokenService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,6 +30,7 @@ import java.util.Map;
 
 @Service
 @AllArgsConstructor
+@EnableConfigurationProperties(GhpProperties.class)
 public class UserServiceImpl implements UserDetailsService, UserService {
 
     private UserRepository userRepository;
@@ -36,6 +39,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     private TokenService tokenService;
     private SpringTemplateEngine springTemplateEngine;
     private JwtAuthenticationService jwtAuthenticationService;
+    private final GhpProperties ghpProperties;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -74,7 +78,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 savedUser
         );
 
-        String link = "https://ghp.stoelting-michael.de/login?confirmToken=" + token.getToken();
+        String link = ghpProperties.emailActivationLink + token.getToken();
 
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("email", savedUser.getEmail());
@@ -125,7 +129,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 user
         );
 
-        String link = "https://ghp.stoelting-michael.de/login?confirmToken=" + token.getToken();
+        String link = ghpProperties.emailPasswordResetLink + token.getToken();
         Map<String, Object> model = new HashMap<>();
         model.put("email", user.getEmail());
         model.put("link", link);

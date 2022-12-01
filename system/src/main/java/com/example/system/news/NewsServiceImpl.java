@@ -1,9 +1,14 @@
 package com.example.system.news;
 
 import com.example.system.attachment.AttachmentService;
+import com.example.system.config.GhpProperties;
 import com.example.system.user.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
@@ -16,11 +21,14 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@EnableConfigurationProperties(GhpProperties.class)
 public class NewsServiceImpl implements NewsService{
 
     private NewsRepository newsRepository;
     private AttachmentService attachmentService;
     private UserService userService;
+    private final GhpProperties ghpProperties;
+
 
     public List<News> getAllNewsEntries() {
         return newsRepository.findAllByOrderByNewsDateDesc();
@@ -43,6 +51,7 @@ public class NewsServiceImpl implements NewsService{
         );
     }
 
+    @Transactional
     public News insertNewNewsEntry(NewsEntryDto newsEntryDto, Optional<MultipartFile> file) throws IOException {
 
         if(
@@ -57,13 +66,13 @@ public class NewsServiceImpl implements NewsService{
 
         if (file.isPresent()) {
 
-            if(!Files.isDirectory(Paths.get("/upload/images/"))) {
-                new File("/upload/images/").mkdirs();
+            if(!Files.isDirectory(Paths.get(ghpProperties.getUploadDir()))) {
+                new File(ghpProperties.getUploadDir()).mkdirs();
             }
 
             var attachment = attachmentService.handelAttachmentUpload(
                     file.orElseThrow(() -> new IllegalStateException("Beim Hochladen ist ein Fehler aufgetreten")),
-                    "/upload/images/"
+                    ghpProperties.getUploadDir()
             );
             return newsRepository.save(new News(
                     newsEntryDto.getNewsDate(),
@@ -110,7 +119,7 @@ public class NewsServiceImpl implements NewsService{
         if (file.isPresent()) {
             var attachment = attachmentService.handelAttachmentUpload(
                     file.orElseThrow(() -> new IllegalStateException("Beim Hochladen ist ein Fehler aufgetreten")),
-                    "/upload/images/"
+                    ghpProperties.getUploadDir()
             );
             newsEntry.setNewsImage(attachment);
         } else {

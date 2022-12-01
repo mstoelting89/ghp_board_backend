@@ -1,10 +1,12 @@
 package com.example.system.email;
 
+import com.example.system.config.GhpProperties;
 import com.example.system.user.User;
 import com.example.system.user.UserService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -23,10 +25,12 @@ import java.util.regex.Pattern;
 
 @Service
 @AllArgsConstructor
+@EnableConfigurationProperties(GhpProperties.class)
 public class EmailServiceImpl implements EmailService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(EmailServiceImpl.class);
     private final JavaMailSender mailSender;
+    private final GhpProperties ghpProperties;
 
     @Override
     @Async
@@ -39,9 +43,9 @@ public class EmailServiceImpl implements EmailService {
             messageHelper.setText(email, true);
             messageHelper.setTo(to);
             messageHelper.setSubject(subject);
-            messageHelper.setFrom("ghp@stoelting-michael.de");
+            messageHelper.setFrom(ghpProperties.emailFromValue);
 
-            Resource resource = new ClassPathResource("templates/images/ghp_text_white.png");
+            Resource resource = new ClassPathResource(ghpProperties.emailLogoPath);
 
             messageHelper.addInline("logo.png", resource);
 
