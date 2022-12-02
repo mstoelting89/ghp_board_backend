@@ -15,4 +15,5 @@ public class GhpProperties {
     public String emailFromValue;
     public String emailLogoPath;
     public String contactEmail;
+    public String dashboardLink;
 }

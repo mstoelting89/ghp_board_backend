@@ -88,7 +88,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
         String html = springTemplateEngine.process("new-member-template", context);
 
-        // TODO: change email to user email
         emailService.send(savedUser.getEmail(), html, "Guitar Hearts Project: Einladung zum Board");
 
         return "User " + savedUser.getEmail() + " erfolgreich angelegt. Passwort Email wurde verschickt.";
@@ -138,7 +137,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
         String html = springTemplateEngine.process("password-reset-template", context);
 
-        // TODO: change email to user email
         emailService.send(user.getEmail(), html, "Guitar Hearts Project: Passwort zurücksetzen");
 
         return "Eine Email zum Zurücksetzen des Passworts wurde verschickt";
@@ -193,9 +191,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         List<User> userList = getAllUsers();
 
         userList.forEach(user -> {
-            // TODO: change email to user email
             Map<String, Object> model = new HashMap<>();
             model.put("email", user.getEmail());
+            model.put("link", ghpProperties.dashboardLink);
             Context context = new Context();
             context.setVariables(model);
 
