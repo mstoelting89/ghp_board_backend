@@ -3,10 +3,12 @@ package com.example.system.demand;
 import com.example.system.attachment.Attachment;
 import com.example.system.attachment.AttachmentResponse;
 import com.example.system.attachment.AttachmentServiceImpl;
+import com.example.system.config.GhpProperties;
 import com.example.system.user.UserService;
 import com.example.system.user.UserServiceImpl;
 import com.example.system.voting.VotingService;
 import lombok.AllArgsConstructor;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
@@ -19,12 +21,14 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@EnableConfigurationProperties(GhpProperties.class)
 public class DemandServiceImpl implements DemandService {
 
     private DemandRepository demandRepository;
     private AttachmentServiceImpl attachmentServiceImpl;
     private VotingService votingService;
     private UserService userService;
+    private final GhpProperties ghpProperties;
 
     @Override
     public List<DemandResponseDto> getAllDemandEntries(String email) {
@@ -101,7 +105,7 @@ public class DemandServiceImpl implements DemandService {
     public Demand insertNewDemandEntry(DemandEntryDto demandEntryDto, Optional<List<MultipartFile>> file) {
 
         List<MultipartFile> fileList = file.orElse(Collections.emptyList());
-        List<Attachment> attachments = attachmentServiceImpl.handleAttachmentUploadList(fileList, "/upload/images/");
+        List<Attachment> attachments = attachmentServiceImpl.handleAttachmentUploadList(fileList, ghpProperties.uploadDir);
 
         if( demandEntryDto.getDemandName() == null ||
                 demandEntryDto.getDemandText() == null ||
@@ -157,7 +161,7 @@ public class DemandServiceImpl implements DemandService {
 
         // handle new images
         List<MultipartFile> fileList = file.orElse(Collections.emptyList());
-        List<Attachment> newAttachments = attachmentServiceImpl.handleAttachmentUploadList(fileList, "/upload/images/");
+        List<Attachment> newAttachments = attachmentServiceImpl.handleAttachmentUploadList(fileList, ghpProperties.uploadDir);
 
         // merge both attachment arrays (new and old)
         existingAttachments.addAll(newAttachments);

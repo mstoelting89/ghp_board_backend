@@ -3,10 +3,12 @@ package com.example.system.blog;
 import com.example.system.attachment.Attachment;
 import com.example.system.attachment.AttachmentResponse;
 import com.example.system.attachment.AttachmentService;
+import com.example.system.config.GhpProperties;
 import com.example.system.demand.DemandEntryDto;
 import com.example.system.email.EmailService;
 import com.example.system.user.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
@@ -19,10 +21,12 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@EnableConfigurationProperties(GhpProperties.class)
 public class BlogServiceImpl implements BlogService {
     private BlogRespository blogRespository;
     private AttachmentService attachmentService;
     private UserService userService;
+    private final GhpProperties ghpProperties;
 
     @Override
     public List<BlogResponseDto> getAllBlogPosts() {
@@ -47,7 +51,7 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public Blog insertNewBlogEntry(BlogEntryDto blogEntryDto, Optional<List<MultipartFile>> file) {
         List<MultipartFile> fileList = file.orElse(Collections.emptyList());
-        List<Attachment> attachments = attachmentService.handleAttachmentUploadList(fileList, "/upload/images/");
+        List<Attachment> attachments = attachmentService.handleAttachmentUploadList(fileList, ghpProperties.uploadDir);
 
         if( blogEntryDto.getBlogAuthor() == null ||
                 blogEntryDto.getBlogText() == null ||
@@ -119,7 +123,7 @@ public class BlogServiceImpl implements BlogService {
 
         // handle new images
         List<MultipartFile> fileList = files.orElse(Collections.emptyList());
-        List<Attachment> newAttachments = attachmentService.handleAttachmentUploadList(fileList,"/upload/images/");
+        List<Attachment> newAttachments = attachmentService.handleAttachmentUploadList(fileList, ghpProperties.uploadDir);
 
         // merge both attachment arrays (new and old)
         existingAttachments.addAll(newAttachments);

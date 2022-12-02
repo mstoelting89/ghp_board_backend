@@ -55,6 +55,7 @@ public class InstrumentController {
             @RequestParam("file") Optional<MultipartFile> file,
             @RequestParam("instrumentUpdateId") Long instrumentUpdateId,
             @RequestParam("instrumentData") String instrumentUpdateString,
+            @RequestParam("instrumentImageDelete") boolean instrumentImageDelete,
             HttpServletRequest request) throws IOException
     {
         ObjectMapper mapper = new ObjectMapper()
@@ -62,7 +63,7 @@ public class InstrumentController {
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         Instrument instrumentDto = mapper.readValue(instrumentUpdateString, Instrument.class);
 
-        return new ResponseEntity<>(instrumentService.updateInstrumentEntry(instrumentUpdateId, instrumentDto, file), HttpStatus.OK);
+        return new ResponseEntity<>(instrumentService.updateInstrumentEntry(instrumentUpdateId, instrumentDto, file, instrumentImageDelete), HttpStatus.OK);
     }
 
     @DeleteMapping(

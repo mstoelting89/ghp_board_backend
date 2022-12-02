@@ -1,8 +1,10 @@
 package com.example.system.instrument;
 
 import com.example.system.attachment.AttachmentService;
+import com.example.system.config.GhpProperties;
 import com.example.system.user.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
@@ -14,11 +16,13 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@EnableConfigurationProperties(GhpProperties.class)
 public class InstrumentServiceImpl implements InstrumentService {
 
     private InstrumentRepository instrumentRepository;
     private AttachmentService attachmentService;
     private UserService userService;
+    private final GhpProperties ghpProperties;
 
     @Override
     public List<InstrumentResponseDto> getAllInstruments() {
@@ -48,7 +52,7 @@ public class InstrumentServiceImpl implements InstrumentService {
         if (file.isPresent()) {
             var attachment = attachmentService.handelAttachmentUpload(
                     file.orElseThrow(() -> new IllegalStateException("Beim Hochladen ist ein Fehler aufgetreten")),
-                    "/upload/images/"
+                    ghpProperties.uploadDir
             );
 
             return instrumentRepository.save(new Instrument(
@@ -75,11 +79,11 @@ public class InstrumentServiceImpl implements InstrumentService {
     }
 
     @Override
-    public Instrument updateInstrumentEntry(Long instrumentUpdateId, Instrument instrumentDto, Optional<MultipartFile> file) throws IOException {
+    public Instrument updateInstrumentEntry(Long instrumentUpdateId, Instrument instrumentDto, Optional<MultipartFile> file, boolean instrumentImageDelete) throws IOException {
         var instrumentEntry = instrumentRepository.findById(instrumentUpdateId)
                 .orElseThrow(() -> new NotFoundException("Kein Eintrag mit der Id " + instrumentUpdateId + " gefunden"));
 
-        if (instrumentDto.getInstrumentImage() != null) {
+        if (instrumentDto.getInstrumentImage() != null && instrumentImageDelete) {
             attachmentService.deleteImage(instrumentEntry.getInstrumentImage().getId());
         }
 
@@ -89,10 +93,10 @@ public class InstrumentServiceImpl implements InstrumentService {
         if (file.isPresent()) {
             var attachment = attachmentService.handelAttachmentUpload(
                     file.orElseThrow(() -> new IllegalStateException("Beim Hochladen ist ein Fehler aufgetreten")),
-                    "/upload/images/"
+                    ghpProperties.uploadDir
             );
             instrumentEntry.setInstrumentImage(attachment);
-        } else {
+        } else if (instrumentImageDelete) {
             instrumentEntry.setInstrumentImage(null);
         }
 

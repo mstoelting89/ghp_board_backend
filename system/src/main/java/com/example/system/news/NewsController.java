@@ -65,14 +65,15 @@ public class NewsController {
             @RequestParam("file") Optional<MultipartFile> file,
             @RequestParam("newsUpdateId") Long newsUpdateId,
             @RequestParam("newsData") String newsUpdateString,
+            @RequestParam("newsImageDelete") boolean newsImageDelete,
             HttpServletRequest request) throws IOException
     {
         ObjectMapper mapper = new ObjectMapper()
                 .findAndRegisterModules()
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         NewsEntryDto newsUpdateDto = mapper.readValue(newsUpdateString, NewsEntryDto.class);
-
-        return new ResponseEntity<>(newsService.updateNewsEntry(newsUpdateId, newsUpdateDto, file), HttpStatus.OK);
+        System.out.println(newsImageDelete);
+        return new ResponseEntity<>(newsService.updateNewsEntry(newsUpdateId, newsUpdateDto, file, newsImageDelete), HttpStatus.OK);
     }
 
     //Delete -> delete an existing NewsEntry

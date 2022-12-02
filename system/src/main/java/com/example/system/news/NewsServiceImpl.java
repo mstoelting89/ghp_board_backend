@@ -95,11 +95,11 @@ public class NewsServiceImpl implements NewsService{
     }
 
     @Override
-    public News updateNewsEntry(Long newsId, NewsEntryDto newsUpdateDto, Optional<MultipartFile> file) throws IOException {
+    public News updateNewsEntry(Long newsId, NewsEntryDto newsUpdateDto, Optional<MultipartFile> file, boolean newsImageDelete) throws IOException {
         var newsEntry = newsRepository.findById(newsId)
                 .orElseThrow(() -> new NotFoundException("Kein Eintrag mit der Id " + newsId + " gefunden"));
 
-        if (newsEntry.getNewsImage() != null) {
+        if (newsEntry.getNewsImage() != null && newsImageDelete) {
             newsRepository.deleteImage(newsId);
             attachmentService.deleteImage(newsEntry.getNewsImage().getId());
         }
@@ -122,7 +122,7 @@ public class NewsServiceImpl implements NewsService{
                     ghpProperties.getUploadDir()
             );
             newsEntry.setNewsImage(attachment);
-        } else {
+        } else if (newsImageDelete) {
             newsEntry.setNewsImage(null);
         }
 
