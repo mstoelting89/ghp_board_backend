@@ -16,7 +16,6 @@
         }
         .content {
             font-size: 18px;
-            margin-bottom: 50px;
         }
         h3 {
             font-weight: normal;
@@ -28,24 +27,25 @@
         }
         .header img {
             margin-left: 30px;
+            max-height: 70px;
+            width: auto;
         }
         .footer {
-            height: 120px;
+            height: 270px;
             width: 100%;
             background-color: #000;
             color: #fff;
-            display: flex;
-            justify-content: space-between;
         }
         .footer a {
             color: #fff;
             text-decoration: none;
         }
         .footer .contact {
+            padding-top: 20px;
             margin-left: 30px;
         }
         .footer .sidemenu {
-            margin-right: 30px;
+            margin-left: 30px;
         }
         .footer div {
             margin-top: 30px;
@@ -62,7 +62,7 @@
     <div class="content">
         Auf dem Guitar Hearts Board ist grade eben Neuigkeiten veröffentlicht worden. <br>
         Schau doch mal rein:<br>
-        <a href="http://localhost:8081/dashboard">Zum Dashboard</a>
+        <p><a th:href="${link}">Zum Dashboard</a></p>
         <br />
         Beste Grüße, <br />
         Der 1. Vorsitzende des Guitar Hearts Projects
