@@ -25,6 +25,6 @@ public class AuthenticationService {
         return userRepository.findByEmail(email)
                 .filter(user -> passwordEncoder.matches(password, user.getPassword()))
                 .map(user -> new JwtTokenDto(jwtTokenService.generateToken(email)))
-                .orElseThrow(() -> new EntityNotFoundException("Email nicht vorhanden"));
+                .orElseThrow(() -> new EntityNotFoundException("Email oder Passwort nicht korrekt."));
     }
 }
