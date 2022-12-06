@@ -47,7 +47,7 @@ public class InstrumentServiceImpl implements InstrumentService {
     @Override
     public Instrument insertNewInstrumentEntry(Instrument instrumentDto, Optional<MultipartFile> file) throws IOException {
 
-        userService.sendToAll("new-instrument", "Guitar Hearts Project: Neues Instrument vorhanden");
+        //userService.sendToAll("new-instrument", "Guitar Hearts Project: Neues Instrument vorhanden");
 
         if (file.isPresent()) {
             var attachment = attachmentService.handelAttachmentUpload(
