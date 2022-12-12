@@ -22,6 +22,7 @@ import org.thymeleaf.linkbuilder.ILinkBuilder;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.webjars.NotFoundException;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -173,6 +174,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
+    @Transactional
     public String deleteUser(Long userDeleteId) {
         User user = userRepository.findById(userDeleteId)
                 .orElseThrow(() -> new UsernameNotFoundException("Der User existiert nicht."));
