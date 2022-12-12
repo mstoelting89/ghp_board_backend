@@ -51,7 +51,7 @@ public class InstrumentController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> updateNews(
+    public ResponseEntity<?> updateInstrument(
             @RequestParam("file") Optional<MultipartFile> file,
             @RequestParam("instrumentUpdateId") Long instrumentUpdateId,
             @RequestParam("instrumentData") String instrumentUpdateString,

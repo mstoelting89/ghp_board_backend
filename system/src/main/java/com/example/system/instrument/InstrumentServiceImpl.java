@@ -37,7 +37,9 @@ public class InstrumentServiceImpl implements InstrumentService {
                     instrument.getId(),
                     instrument.getInstrumentDate(),
                     instrument.getInstrumentTitle(),
-                    attachment
+                    attachment,
+                    instrument.getDonator(),
+                    instrument.isTaken()
             ));
         });
 
@@ -58,13 +60,17 @@ public class InstrumentServiceImpl implements InstrumentService {
             return instrumentRepository.save(new Instrument(
                     instrumentDto.getInstrumentDate(),
                     instrumentDto.getInstrumentTitle(),
-                    attachment
+                    attachment,
+                    instrumentDto.getDonator(),
+                    instrumentDto.isTaken()
             ));
         } else {
             return instrumentRepository.save(new Instrument(
                     instrumentDto.getInstrumentDate(),
                     instrumentDto.getInstrumentTitle(),
-                    null
+                    null,
+                    instrumentDto.getDonator(),
+                    instrumentDto.isTaken()
             ));
         }
 

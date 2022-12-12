@@ -27,12 +27,19 @@ public class Instrument {
     @Column(nullable = false)
     private String instrumentTitle;
 
+    private String donator;
+
+    @Column(nullable = false)
+    private boolean taken;
+
     @OneToOne(cascade = CascadeType.ALL)
     private Attachment instrumentImage;
 
-    public Instrument(LocalDateTime instrumentDate, String instrumentTitle, Attachment instrumentImage) {
+    public Instrument(LocalDateTime instrumentDate, String instrumentTitle, Attachment instrumentImage, String donator, Boolean taken) {
         this.instrumentDate = instrumentDate;
         this.instrumentTitle = instrumentTitle;
         this.instrumentImage = instrumentImage;
+        this.donator = donator;
+        this.taken = taken;
     }
 }

@@ -16,4 +16,6 @@ public class InstrumentResponseDto {
     private LocalDateTime instrumentDate;
     private String instrumentTitle;
     private String instrumentImage;
+    private String donator;
+    private Boolean taken;
 }
