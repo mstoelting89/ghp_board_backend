@@ -95,6 +95,8 @@ public class InstrumentServiceImpl implements InstrumentService {
 
         instrumentEntry.setInstrumentTitle(instrumentDto.getInstrumentTitle());
         instrumentEntry.setInstrumentDate(instrumentDto.getInstrumentDate());
+        instrumentEntry.setDonator(instrumentDto.getDonator());
+        instrumentEntry.setTaken(instrumentDto.isTaken());
 
         if (file.isPresent()) {
             var attachment = attachmentService.handelAttachmentUpload(

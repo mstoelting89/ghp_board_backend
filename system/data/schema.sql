@@ -95,6 +95,8 @@ CREATE TABLE `instrument` (
     `instrument_date` datetime NOT NULL,
     `instrument_title` varchar(255) NOT NULL,
     `instrument_image_id` bigint(20) DEFAULT NULL,
+    `donator` varchar(255) DEFAULT null,
+    `taken` bit(1) DEFAULT 0,
     PRIMARY KEY (`id`),
     KEY `FK95a9j7ucg5fwottoimwy4rncr` (`instrument_image_id`),
     CONSTRAINT `FK95a9j7ucg5fwottoimwy4rncr` FOREIGN KEY (`instrument_image_id`) REFERENCES `attachment` (`id`)
