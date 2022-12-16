@@ -2,10 +2,7 @@ package com.example.system.news;
 
 import com.example.system.attachment.AttachmentService;
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
@@ -16,10 +13,8 @@ import org.webjars.NotFoundException;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -51,18 +46,6 @@ public class NewsServiceTest {
 
     @Autowired
     private NewsRepository newsRepository;
-
-    @BeforeEach
-    public void setup() {
-        News news2 = new News();
-        news2.setId(2L);
-        news2.setNewsAuthor(NEWS_AUTHOR_2);
-        news2.setNewsDate(NEWS_DATE_2);
-        news2.setNewsText(NEWS_TEXT_2);
-        news2.setNewsTitle(NEWS_TITLE_2);
-
-        newsRepository.save(news2);
-    }
 
     @Test
     public void shouldInsertNewNewsEntryWithImage() throws IOException {
@@ -125,16 +108,149 @@ public class NewsServiceTest {
         assertEquals("Speichern fehlgeschlagen - Eintrag nicht vollständig", exception.getMessage());
     }
 
-    // TODO: shouldUpdateExistingNewsEntryWithDifferentData
     @Test
-    public void shouldUpdateExistingNewsEntryWithDifferentData() {
-        // Neues News DTO erstellen mit unterschiedlichen Daten aus 1 und 2
-        // vergleich ob korrekt
+    public void shouldUpdateExistingNewsEntryWithDifferentData() throws IOException {
+        // arrange
+        NewsEntryDto newsEntryDto = new NewsEntryDto();
+        newsEntryDto.setNewsDate(NEWS_DATE);
+        newsEntryDto.setNewsText(NEWS_TEXT);
+        newsEntryDto.setNewsTitle(NEWS_TITLE);
+        newsEntryDto.setNewsAuthor(NEWS_AUTHOR);
+        Optional<MultipartFile> image = Optional.empty();
+
+        NewsEntryDto newsUpdatedEntryDto = new NewsEntryDto();
+        newsUpdatedEntryDto.setNewsDate(NEWS_DATE_2);
+        newsUpdatedEntryDto.setNewsText(NEWS_TEXT_2);
+        newsUpdatedEntryDto.setNewsTitle(NEWS_TITLE);
+        newsUpdatedEntryDto.setNewsAuthor(NEWS_AUTHOR);
+
+        // act
+        var result = newsService.insertNewNewsEntry(newsEntryDto, image);
+
+        var updatedResult = newsService.updateNewsEntry(result.getId(), newsUpdatedEntryDto, image, false);
+
+        // assert
+        assertNotNull(updatedResult);
+        assertEquals(updatedResult.getNewsDate(), NEWS_DATE_2);
+        assertEquals(updatedResult.getNewsText(), NEWS_TEXT_2);
+        assertEquals(updatedResult.getNewsTitle(), NEWS_TITLE);
+        assertEquals(updatedResult.getNewsAuthor(), NEWS_AUTHOR);
+        assertNull(updatedResult.getNewsImage());
+    }
+
+    @Test
+    public void shouldUpdateExistingNewsEntryWithNewImage() throws IOException {
+        // arrange
+        NewsEntryDto newsEntryDto = new NewsEntryDto();
+        newsEntryDto.setNewsDate(NEWS_DATE);
+        newsEntryDto.setNewsText(NEWS_TEXT);
+        newsEntryDto.setNewsTitle(NEWS_TITLE);
+        newsEntryDto.setNewsAuthor(NEWS_AUTHOR);
+        Optional<MultipartFile> image = Optional.empty();
+
+        var result = newsService.insertNewNewsEntry(newsEntryDto, image);
+
+        // act
+        File file = new File("src/test/resources/upload/test_1.jpg");
+        FileInputStream input = new FileInputStream(file);
+        MultipartFile multipartFile = new MockMultipartFile("test_1.jpg",
+                file.getName(), "image/jpg", IOUtils.toByteArray(input));
+
+        Optional<MultipartFile> newImage = Optional.of(multipartFile);
+        var newResult = newsService.updateNewsEntry(result.getId(), newsEntryDto, newImage, false);
+
+        // assert
+        assertNull(result.getNewsImage());
+        assertNotNull(newResult.getNewsImage());
+
+        Files.delete(Paths.get(newResult.getNewsImage().getLocation()));
+    }
+
+    @Test
+    public void shouldRemoveImageFromExistingNewsEntry() throws IOException {
+        // arrange
+        NewsEntryDto newsEntryDto = new NewsEntryDto();
+        newsEntryDto.setNewsDate(NEWS_DATE);
+        newsEntryDto.setNewsText(NEWS_TEXT);
+        newsEntryDto.setNewsTitle(NEWS_TITLE);
+        newsEntryDto.setNewsAuthor(NEWS_AUTHOR);
+
+        File file = new File("src/test/resources/upload/test_1.jpg");
+        FileInputStream input = new FileInputStream(file);
+        MultipartFile multipartFile = new MockMultipartFile("test_1.jpg",
+                file.getName(), "image/jpg", IOUtils.toByteArray(input));
+
+        Optional<MultipartFile> image = Optional.of(multipartFile);
+
+        var result = newsService.insertNewNewsEntry(newsEntryDto, image);
+
+        // act
+        var newResult = newsService.updateNewsEntry(result.getId(), newsEntryDto, Optional.empty(), true);
+
+        // assert
+        assertNotNull(result.getNewsImage());
+        assertNull(newResult.getNewsImage());
+    }
+
+    @Test
+    public void shouldDeleteNewsEntryWithImage() throws IOException {
+        // arrange
+        NewsEntryDto newsEntryDto = new NewsEntryDto();
+        newsEntryDto.setNewsDate(NEWS_DATE);
+        newsEntryDto.setNewsText(NEWS_TEXT);
+        newsEntryDto.setNewsTitle(NEWS_TITLE);
+        newsEntryDto.setNewsAuthor(NEWS_AUTHOR);
+
+        File file = new File("src/test/resources/upload/test_1.jpg");
+        FileInputStream input = new FileInputStream(file);
+        MultipartFile multipartFile = new MockMultipartFile("test_1.jpg",
+                file.getName(), "image/jpg", IOUtils.toByteArray(input));
+
+        Optional<MultipartFile> image = Optional.of(multipartFile);
+
+        var result = newsService.insertNewNewsEntry(newsEntryDto, image);
+
+        // act
+        newsService.deleteNewsEntry(result.getId());
+        Throwable exception = assertThrows(NotFoundException.class, () -> {
+            var newResult = newsService.getNewsEntry(result.getId());
+        });
+
+        // assert
+        assertEquals(result.getNewsDate(), NEWS_DATE);
+        assertEquals(result.getNewsText(), NEWS_TEXT);
+        assertEquals(result.getNewsTitle(), NEWS_TITLE);
+        assertEquals(result.getNewsAuthor(), NEWS_AUTHOR);
+        assertNotNull(result.getNewsImage());
+
+        assertEquals("Newsentry not found", exception.getMessage());
 
     }
 
-    // TODO: shouldUpdateExistingNewsEntryWithNewImage
-    // TODO: shouldRemoveImageFromExistingNewsEntry
-    // TODO: shouldDeleteNewsEntryWithImage
-    // TODO: shouldDeleteNewsEntryWithoutImage
+    @Test
+    public void shouldDeleteNewsEntryWithoutImage() throws IOException {
+        // arrange
+        NewsEntryDto newsEntryDto = new NewsEntryDto();
+        newsEntryDto.setNewsDate(NEWS_DATE);
+        newsEntryDto.setNewsText(NEWS_TEXT);
+        newsEntryDto.setNewsTitle(NEWS_TITLE);
+        newsEntryDto.setNewsAuthor(NEWS_AUTHOR);
+
+        var result = newsService.insertNewNewsEntry(newsEntryDto, Optional.empty());
+
+        // act
+        newsService.deleteNewsEntry(result.getId());
+        Throwable exception = assertThrows(NotFoundException.class, () -> {
+            var newResult = newsService.getNewsEntry(result.getId());
+        });
+
+        // assert
+        assertEquals(result.getNewsDate(), NEWS_DATE);
+        assertEquals(result.getNewsText(), NEWS_TEXT);
+        assertEquals(result.getNewsTitle(), NEWS_TITLE);
+        assertEquals(result.getNewsAuthor(), NEWS_AUTHOR);
+        assertNull(result.getNewsImage());
+
+        assertEquals("Newsentry not found", exception.getMessage());
+    }
 }
