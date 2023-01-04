@@ -36,7 +36,7 @@ public class Demand {
     @Column(nullable = false)
     private String demandName;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade={CascadeType.MERGE,CascadeType.REFRESH})
     private List<Attachment> demandImages;
 
     public Demand(LocalDateTime demandDate, String demandTitle, String demandText, String demandName, List<Attachment> demandImages) {

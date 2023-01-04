@@ -34,12 +34,16 @@ public class DemandServiceImpl implements DemandService {
     public List<DemandResponseDto> getAllDemandEntries(String email) {
         var response = new ArrayList<DemandResponseDto>();
         var demands = demandRepository.findAllByOrderByDemandDateDesc();
-        var user = userService.loadUserByMail(email);
 
         demands.forEach(demand -> {
             var images = new ArrayList<AttachmentResponse>();
             var voting = votingService.getVotingValue(demand);
-            var personalVoting = votingService.getVotingByUser(demand, user);
+            Optional<Boolean> personalVoting = Optional.empty();
+
+            if (email != null) {
+                personalVoting = votingService.getVotingByUser(demand, userService.loadUserByMail(email));
+            }
+
             Long likes;
             Long dislikes;
             Optional<Boolean> personalVote;
@@ -81,7 +85,12 @@ public class DemandServiceImpl implements DemandService {
         List<AttachmentResponse> attachments = new ArrayList<>();
 
         var voting = votingService.getVotingValue(demand);
-        var personalVoting = votingService.getVotingByUser(demand, userService.loadUserByMail(email));
+
+        Optional<Boolean> personalVoting = Optional.empty();
+
+        if (email != null) {
+            personalVoting = votingService.getVotingByUser(demand, userService.loadUserByMail(email));
+        }
 
         if(demand.getDemandImages() != null) {
             var demandAttachments = demandRepository.getAttachmentById(id);
@@ -134,9 +143,11 @@ public class DemandServiceImpl implements DemandService {
         var existingAttachments = new ArrayList<Attachment>();
 
         // Get array with only new image ids
-        demandNewDto.getDemandImages().forEach(newImage -> {
-            newImageIds.add(newImage.getId());
-        });
+        if(demandNewDto.getDemandImages() != null) {
+            demandNewDto.getDemandImages().forEach(newImage -> {
+                newImageIds.add(newImage.getId());
+            });
+        }
 
         // check if the new image id is in the previous image array -> if not put them into the delete array
         demandPreviousEntry.getDemandImages().forEach(item -> {
@@ -184,11 +195,18 @@ public class DemandServiceImpl implements DemandService {
     }
 
     @Override
-    public void deleteDemandEntry(Long demandId) {
+    public void deleteDemandEntry(Long demandId) throws IOException {
         var demandEntry = demandRepository.findById(demandId)
                 .orElseThrow(() -> new NotFoundException("Löschen fehlgeschlagen - Eintrag mit der ID " + demandId + " nicht gefunden"));
 
         votingService.deleteByDemand(demandEntry);
         demandRepository.delete(demandEntry);
+        demandEntry.getDemandImages().forEach(image -> {
+            try {
+                attachmentServiceImpl.deleteImage(image.getId());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }

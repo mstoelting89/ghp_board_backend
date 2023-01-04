@@ -2,6 +2,7 @@ package com.example.system.demand;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,5 +16,5 @@ public interface DemandService {
 
     Demand updateDemandEntry(DemandEntryDto demandEntryDto, Long demandId, Optional<List<MultipartFile>> file);
 
-    void deleteDemandEntry(Long newsDeleteId);
+    void deleteDemandEntry(Long demandDeleteId) throws IOException;
 }
