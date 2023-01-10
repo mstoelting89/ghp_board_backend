@@ -32,7 +32,7 @@ public class Instrument {
     @Column(nullable = false)
     private boolean taken;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade={CascadeType.MERGE,CascadeType.REFRESH})
     private Attachment instrumentImage;
 
     public Instrument(LocalDateTime instrumentDate, String instrumentTitle, Attachment instrumentImage, String donator, Boolean taken) {

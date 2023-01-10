@@ -25,6 +25,26 @@ public class InstrumentServiceImpl implements InstrumentService {
     private final GhpProperties ghpProperties;
 
     @Override
+    public InstrumentResponseDto getSpecificInstrument(Long instrumentId) {
+        var instrument = instrumentRepository.findById(instrumentId)
+                .orElseThrow(() -> new NotFoundException("Kein Eintrag mit der Id " + instrumentId + " gefunden"));
+
+        String attachment = null;
+        if (instrument.getInstrumentImage() != null) {
+            attachment = attachmentService.getAttachmentAsBase64(instrument.getInstrumentImage().getId());
+        }
+
+        return new InstrumentResponseDto(
+                instrument.getId(),
+                instrument.getInstrumentDate(),
+                instrument.getInstrumentTitle(),
+                attachment,
+                instrument.getDonator(),
+                instrument.isTaken()
+        );
+    }
+
+    @Override
     public List<InstrumentResponseDto> getAllInstruments() {
         List<InstrumentResponseDto> instruments = new ArrayList<>();
         instrumentRepository.findAll().forEach(instrument -> {
@@ -58,12 +78,12 @@ public class InstrumentServiceImpl implements InstrumentService {
             );
 
             return instrumentRepository.save(new Instrument(
-                    instrumentDto.getInstrumentDate(),
-                    instrumentDto.getInstrumentTitle(),
-                    attachment,
-                    instrumentDto.getDonator(),
-                    instrumentDto.isTaken()
-            ));
+                            instrumentDto.getInstrumentDate(),
+                            instrumentDto.getInstrumentTitle(),
+                            attachment,
+                            instrumentDto.getDonator(),
+                            instrumentDto.isTaken()
+                    ));
         } else {
             return instrumentRepository.save(new Instrument(
                     instrumentDto.getInstrumentDate(),
@@ -77,9 +97,14 @@ public class InstrumentServiceImpl implements InstrumentService {
     }
 
     @Override
-    public void deleteInstrumentEntry(Long instrumentDeleteId) {
+    public void deleteInstrumentEntry(Long instrumentDeleteId) throws IOException {
         var instrumentEntry = instrumentRepository.findById(instrumentDeleteId)
                 .orElseThrow(() -> new NotFoundException("Löschen fehlgeschlagen - Eintrag mit der ID " + instrumentDeleteId + " nicht gefunden"));
+
+        if (instrumentEntry.getInstrumentImage() != null) {
+            instrumentRepository.deleteImage(instrumentDeleteId);
+            attachmentService.deleteImage(instrumentEntry.getInstrumentImage().getId());
+        }
 
         instrumentRepository.delete(instrumentEntry);
     }
