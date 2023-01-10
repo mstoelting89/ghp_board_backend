@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface BlogService {
     List<BlogResponseDto> getAllBlogPosts();
+    BlogResponseDto getSpecificBlogPost(Long blogId);
 
     Blog insertNewBlogEntry(BlogEntryDto blogEntryDto, Optional<List<MultipartFile>> file);
 

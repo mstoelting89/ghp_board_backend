@@ -49,6 +49,22 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
+    public BlogResponseDto getSpecificBlogPost(Long blogId) {
+        var blogResponseDto = blogRespository.findById(blogId).orElseThrow(() -> new NotFoundException("Keinen Blogeintrag mit der id " + blogId + " gefunden"));
+        List<AttachmentResponse> attachments = attachmentService.getAttachmentListAsBase64(blogId, blogResponseDto.getBlogImages());
+
+        return new BlogResponseDto(
+                blogResponseDto.getId(),
+                blogResponseDto.getBlogDate(),
+                blogResponseDto.getBlogTitle(),
+                blogResponseDto.getBlogText(),
+                blogResponseDto.getBlogAuthor(),
+                attachments,
+                blogResponseDto.getIsPublic()
+        );
+    }
+
+    @Override
     public Blog insertNewBlogEntry(BlogEntryDto blogEntryDto, Optional<List<MultipartFile>> file) {
         List<MultipartFile> fileList = file.orElse(Collections.emptyList());
         List<Attachment> attachments = attachmentService.handleAttachmentUploadList(fileList, ghpProperties.uploadDir);
@@ -80,6 +96,13 @@ public class BlogServiceImpl implements BlogService {
                 .orElseThrow(() -> new NotFoundException("Löschen fehlgeschlagen - Eintrag mit der ID " + id + " nicht gefunden"));
 
         blogRespository.delete(blogEntry);
+        blogEntry.getBlogImages().forEach(blogImage -> {
+            try {
+                attachmentService.deleteImage(blogImage.getId());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Override
@@ -98,9 +121,11 @@ public class BlogServiceImpl implements BlogService {
             throw new NotFoundException("Speichern fehlgeschlagen - Eintrag nicht vollständig");
         }
 
-        blogNewDto.getBlogImages().forEach(newImage -> {
-            newImageIds.add(newImage.getId());
-        });
+        if (blogNewDto.getBlogImages() != null) {
+            blogNewDto.getBlogImages().forEach(newImage -> {
+                newImageIds.add(newImage.getId());
+            });
+        }
 
         blogPreviousEntry.getBlogImages().forEach(item -> {
             if (!newImageIds.contains(item.getId())) {

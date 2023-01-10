@@ -34,7 +34,7 @@ public class Blog {
     @Column(nullable = false)
     private String blogAuthor;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade={CascadeType.MERGE,CascadeType.REFRESH})
     private List<Attachment> blogImages;
 
     private Boolean isPublic;
