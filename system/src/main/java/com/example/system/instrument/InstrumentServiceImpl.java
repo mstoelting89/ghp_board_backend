@@ -47,7 +47,7 @@ public class InstrumentServiceImpl implements InstrumentService {
     @Override
     public List<InstrumentResponseDto> getAllInstruments() {
         List<InstrumentResponseDto> instruments = new ArrayList<>();
-        instrumentRepository.findAll().forEach(instrument -> {
+        instrumentRepository.findAllByOrderByInstrumentDateDesc().forEach(instrument -> {
             String attachment = null;
             if (instrument.getInstrumentImage() != null) {
                 attachment = attachmentService.getAttachmentAsBase64(instrument.getInstrumentImage().getId());
